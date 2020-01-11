@@ -76,37 +76,17 @@ function Damagelog:InfoFromID(tbl, id)
     }
 end
 
-function Damagelog:IsTeamkill(attacker, victim)
-    if not IsValid(attacker) or not IsValid(victim) then
-        return false
-    end
-
-    local role1 = attacker:GetRole()
-    local role2 = victim:GetRole()
-
-    if not ROLES then
-        if role1 == role2 then
-            return true
-        elseif role1 == ROLE_DETECTIVE and role2 == ROLE_INNOCENT then
-            return true
-        elseif role1 == ROLE_INNOCENT and role2 == ROLE_DETECTIVE then
-            return true
-        end
-    else
-        local rda = attacker:GetRoleData()
-        local rdv = victim:GetRoleData()
-        local rdaTeam = hook.Run("TTT2_ModifyRole", attacker) or rda
-        rdaTeam = rdaTeam.team
-        local rdvTeam = hook.Run("TTT2_ModifyRole", victim) or rdv
-        rdvTeam = rdvTeam.team
-
-        if rdaTeam and rdaTeam == rdvTeam and (not rdv.unknownTeam or rdaTeam == TEAM_TRAITOR) then
-            return true
-        end
-    end
-
-    return false
+function Damagelog:IsTeamkill(role1, role2)
+	if role1 == role2 then 
+		return true
+	elseif role1 == ROLE_DETECTIVE and role2 == ROLE_INNOCENT then 
+		return true
+	elseif role1 == ROLE_INNOCENT and role2 == ROLE_DETECTIVE then 
+		return true
+	end
+	return false
 end
+
 
 local function includeEventFile(f)
     f = "damagelogs/shared/events/" .. f
