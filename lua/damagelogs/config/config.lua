@@ -53,6 +53,7 @@ Damagelog.ULX_AutoslayMode = 1
 -- Do not enable this if another addon interferes with roles (Pointshop roles for example)
 Damagelog.ULX_Autoslay_ForceRole = true
 -- Default autoslay reasons (ULX and ServerGuard)
+Damagelog.Autoslay_DefaultReason = "broke server rules"
 Damagelog.Autoslay_DefaultReason1 = "random kill"
 Damagelog.Autoslay_DefaultReason2 = "multiple random kills"
 Damagelog.Autoslay_DefaultReason3 = "random damage"
