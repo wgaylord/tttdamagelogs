@@ -1021,7 +1021,7 @@ function PANEL:Init()
     self.CustomReason = vgui.Create("DTextEntry", self)
     self.CustomReason:SetPos(self.Distance / 2 + self.Dimension / 2 + 25, self.Dimension * 2 / 3)
     self.CustomReason:SetSize(self.Dimension * 1.5 - 35, 25)
-    self.CustomReason:SetText(TTTLogTranslate(GetDMGLogLang, "DefaultReason"))
+    self.CustomReason:SetText("")
 
     self.CustomReason.OnChange = function(panel)
         self:UpdateReason()
