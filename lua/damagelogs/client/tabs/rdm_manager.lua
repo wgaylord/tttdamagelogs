@@ -722,7 +722,7 @@ function Damagelog:DrawRDMManager(x, y)
 
         SetState.DoClick = function()
             local menu = DermaMenu()
-            local attacker = player.GetBySteamID(Damagelog.SelectedReport.attacker)
+            local attacker = player.GetBySteamID(Damagelog.SelectedReport.attacker) -- TODO: Damagelog.SelectedReport.attacker can also be nil
             DrawStatusMenuOption(RDM_MANAGER_WAITING, menu)
             DrawStatusMenuOption(RDM_MANAGER_PROGRESS, menu)
             DrawStatusMenuOption(RDM_MANAGER_FINISHED, menu)

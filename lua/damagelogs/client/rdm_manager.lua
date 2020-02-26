@@ -120,7 +120,7 @@ local function BuildReportFrame(report)
                     net.Start("DL_SendAnswer")
                     net.WriteUInt(current and 1 or 0, 1)
                     net.WriteString(text)
-                    net.WriteUInt(report.index, 16)
+                    net.WriteUInt(report.index, 16) -- report.index can be nil, causing the issue
                     net.SendToServer()
 
                     for _, v in pairs(Damagelog.ReportsQueue) do
