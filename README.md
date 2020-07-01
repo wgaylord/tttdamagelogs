@@ -3,6 +3,8 @@ TTT Damagelogs
 
 TTT Damagelogs is an administration tool designed for TTT to allow handling RDM situations using different tools.
 
+**Get the latest version from the [Releases](https://github.com/BadgerCode/tttdamagelogs/releases) section.**
+
 
 
 ## Improvements found in this fork of the addon
