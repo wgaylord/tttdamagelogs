@@ -3,6 +3,31 @@ TTT Damagelogs
 
 TTT Damagelogs is an administration tool designed for TTT to allow handling RDM situations using different tools.
 
+
+
+## Improvements found in this fork of the addon
+
+* Improves discord integration: [images](https://imgur.com/a/kKgondH) - [discord.lua](https://github.com/BadgerCode/tttdamagelogs/blob/master/lua/damagelogs/server/discord.lua)
+    * **IMPORTANT**: Unfortunately, Discord's servers block webhook messages sent from Garry's Mod servers.
+    * You will need to proxy your requests through another website.
+* Adds support for custom equipment events
+```lua
+-- In your weapon's code
+
+function SWEP:PrimaryAttack()
+    hook.Call("TTTEquipmentUse", nil, self:GetOwner(), self, "C4 placed")
+end
+```
+* Fixes issues with highlighting, admin chat close not working, no default aslay reason: [#1](https://github.com/BadgerCode/tttdamagelogs/pull/1)
+
+<br><br><br><br><br>
+
+----
+
+
+# Original README
+
+
 **Do not directly download the addon from the repo ! It may contain untested or experimental code. Download the addon from the releases tab : https://github.com/Tommy228/TTTDamagelogs/releases**
 
 
