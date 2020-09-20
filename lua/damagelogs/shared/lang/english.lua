@@ -401,6 +401,7 @@ DamagelogLang.english = {
     webhook_report_kept = "Kept",
     webhook_report_finished_by = "Report finished by",
     webhook_report_finished_time_taken = "Time taken",
+    webhook_report_finished_conclusion = "Conclusion",
     webhook_header_report_submitted = "Report Submitted (ID %s)",
     webhook_header_report_forgiven = "Report Forgiven (ID %s)",
     webhook_header_report_kept = "Report Kept (ID %s)",
