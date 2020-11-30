@@ -8,6 +8,13 @@ end
 local event = {}
 event.Type = "FD"
 
+local EVENT_DETAILS = {
+    VictimId = 1,
+    DamageTaken = 2,
+    WasVictimPushed = 3,
+    AttackerId = 4
+}
+
 function event:EntityTakeDamage(ent, dmginfo)
     local att = dmginfo:GetAttacker()
 
@@ -16,17 +23,16 @@ function event:EntityTakeDamage(ent, dmginfo)
 
         if math.floor(damages) > 0 then
             local tbl = {
-                [1] = ent:GetDamagelogID(),
-                [2] = math.Round(damages)
+                [EVENT_DETAILS.VictimId]        = ent:GetDamagelogID(),
+                [EVENT_DETAILS.DamageTaken]     = math.Round(damages),
+                [EVENT_DETAILS.WasVictimPushed] = false
             }
 
             local push = ent.was_pushed
 
             if push and math.max(push.t or 0, push.hurt or 0) > CurTime() - 4 then
-                tbl[3] = true
-                tbl[4] = push.att:GetDamagelogID()
-            else
-                tbl[3] = false
+                tbl[EVENT_DETAILS.WasVictimPushed]  = true
+                tbl[EVENT_DETAILS.AttackerId]       = push.att:GetDamagelogID()
             end
 
             self.CallEvent(tbl)
@@ -35,11 +41,11 @@ function event:EntityTakeDamage(ent, dmginfo)
 end
 
 function event:ToString(tbl, roles)
-    local ply = Damagelog:InfoFromID(roles, tbl[1])
-    local t = string.format(TTTLogTranslate(GetDMGLogLang, "FallDamage"), ply.nick, Damagelog:StrRole(ply.role), tbl[2])
+    local ply = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.VictimId])
+    local t = string.format(TTTLogTranslate(GetDMGLogLang, "FallDamage"), ply.nick, Damagelog:StrRole(ply.role), tbl[EVENT_DETAILS.DamageTaken])
 
-    if tbl[3] then
-        local att = Damagelog:InfoFromID(roles, tbl[4])
+    if tbl[EVENT_DETAILS.WasVictimPushed] then
+        local att = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.AttackerId])
         t = t .. string.format(TTTLogTranslate(GetDMGLogLang, "AfterPush"), att.nick, Damagelog:StrRole(att.role))
     end
 
@@ -51,23 +57,28 @@ function event:IsAllowed(tbl)
 end
 
 function event:Highlight(line, tbl, text)
-    return table.HasValue(Damagelog.Highlighted, tbl[1])
+    return table.HasValue(Damagelog.Highlighted, tbl[EVENT_DETAILS.VictimId])
 end
 
-function event:GetColor(tbl)
-    if tbl[5] and Damagelog:IsTeamkill(tbl[2], tbl[7]) then
-        return Damagelog:GetColor("color_team_damages")
-    else
-        return Damagelog:GetColor("color_fall_damages")
+function event:GetColor(tbl, roles)
+    if tbl[EVENT_DETAILS.WasVictimPushed] then
+        local ent = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.VictimId])
+        local att = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.AttackerId])
+
+        if att != nil && Damagelog:IsTeamkill(att.role, ent.role) then
+            return Damagelog:GetColor("color_team_damages")
+        end
     end
+
+    return Damagelog:GetColor("color_fall_damages")
 end
 
 function event:RightClick(line, tbl, roles, text)
     line:ShowTooLong(true)
-    local ply = Damagelog:InfoFromID(roles, tbl[1])
+    local ply = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.VictimId])
 
-    if tbl[3] then
-        local att = Damagelog:InfoFromID(roles, tbl[4])
+    if tbl[EVENT_DETAILS.WasVictimPushed] then
+        local att = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.AttackerId])
         line:ShowCopy(true, {ply.nick, util.SteamIDFrom64(ply.steamid64)}, {att.nick, util.SteamIDFrom64(att.steamid64)})
     else
         line:ShowCopy(true, {ply.nick, util.SteamIDFrom64(ply.steamid64)})
