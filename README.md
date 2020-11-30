@@ -70,16 +70,6 @@ The original version is no longer being maintained.
 <br>
 
 ## Improvements found in this fork of the addon
+This fork of the project contains various bug fixes, improves to Discord notifications, support for custom equipment events and more.
 
-* Improves discord integration: [images](https://imgur.com/a/kKgondH) - [discord.lua](https://github.com/BadgerCode/tttdamagelogs/blob/master/lua/damagelogs/server/discord.lua)
-    * **IMPORTANT**: Unfortunately, Discord's servers block webhook messages sent from Garry's Mod servers.
-    * You will need to proxy your requests through another website.
-* Adds support for custom equipment events
-```lua
--- In your weapon's code
-
-function SWEP:PrimaryAttack()
-    hook.Call("TTTEquipmentUse", nil, self:GetOwner(), self, "C4 placed")
-end
-```
-* Fixes issues with highlighting, admin chat close not working, no default aslay reason: [#1](https://github.com/BadgerCode/tttdamagelogs/pull/1)
+Check the [releases](https://github.com/BadgerCode/tttdamagelogs/releases) section for the latest improvements.
