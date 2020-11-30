@@ -1,11 +1,70 @@
-TTT Damagelogs
-==============
+# TTT Damagelogs
+Created by Tommy228
 
-TTT Damagelogs is an administration tool designed for TTT to allow handling RDM situations using different tools.
+This is an administration tool which allows server admins to handle player reports during a game of Trouble in Terrorist Town.
 
-**Get the latest version from the [Releases](https://github.com/BadgerCode/tttdamagelogs/releases) section.**
+<br>
+
+## Features
+- Damagelogs *with filter and highlight options*
+- Shot logs
+- Damage informations
+- Old logs (*which saves and displays all features listed above*)
+- RDM Manager 
+- Chat system
+- Report and respond system
+- Punishment options: Autoslay and Autojail
+- Visual Deathscene
+- Translation support: English, German, French, Russian and Polish
+- Storage support for MySQL and SQLite
+- Support for ULX and Serverguard: User groups and RDM punishments
+- Easy configuration via config file and F1 settings menu
+- Discord notifications for reports
+
+<br>
+
+## Latest Version
+
+Get the latest version from the [Releases](https://github.com/BadgerCode/tttdamagelogs/releases) section.
+
+<br>
+
+## Support
+Please raise an issue in the [Issues](https://github.com/BadgerCode/tttdamagelogs/issues) section.
+
+<br>
+
+## Installation
+
+1. Go to the [Releases](https://github.com/BadgerCode/tttdamagelogs/releases) section
+2. Download the **Source Code (zip)** for the latest version
+3. Extract the zip to a folder called `tttdamagelogs`
+    * Make sure the folder name is all lowercase
+4. Copy this folder into your server's addons folder
+5. Configure the addon via the configuration lua file - `lua/config/config.lua`
+
+### Example
+
+![Example installation](https://i.imgur.com/ihPY6EI.png)
+
+* The server's folder is `gmod-test-server`
+* The server's addon folder is `gmod-test-server/garrysmod/addons`
+* The damage logs addon folder is `gmod-test-server/garrysmod/addons/tttdamagelogs`
+* The config file can be found at `gmod-test-server/garrysmod/addons/tttdamagelogs/lua/config/config.lua`
 
 
+<br>
+
+---
+
+<br>
+
+
+## Original Version
+The original version of this project can be found here: https://github.com/Tommy228/TTTDamagelogs <br>
+The original version is no longer being maintained.
+
+<br>
 
 ## Improvements found in this fork of the addon
 
@@ -21,54 +80,3 @@ function SWEP:PrimaryAttack()
 end
 ```
 * Fixes issues with highlighting, admin chat close not working, no default aslay reason: [#1](https://github.com/BadgerCode/tttdamagelogs/pull/1)
-
-<br><br><br><br><br>
-
-----
-
-
-# Original README
-
-
-**Do not directly download the addon from the repo ! It may contain untested or experimental code. Download the addon from the releases tab : https://github.com/Tommy228/TTTDamagelogs/releases**
-
-
-## Features
-- Damagelogs *with filter and highlight options*
-- Shot logs
-- Damage informations
-- Old logs *which saves and displays all features listed above*
-- RDM Manager 
-- Chat system
-- Report and respond system
-- Punishment options: Autoslay and Autojail
-- Visual Deathscene
-- Translation support: English, German, French, Russian and Polish
-- Storage support for MySQL and SQLite
-- Support for ULX and Serverguard: User groups and RDM punishments
-- Easy configuration via config file and F1 settings menu
-
-
-### Installation
-
-##### For *stable* releases look here: https://github.com/Tommy228/TTTDamagelogs/releases
-
-Just drop the TTTDamagelogs folder to addons/. The addon can be configured on the *lua/damagelogs/config/config.lua* file.
-
-**On Linux servers, you need to make the foldername lowercase!**
-
-
-## Support
-- [Facepunch Thread](https://gmod.facepunch.com/f/gmodaddon/jjah/TTT-Damagelogs-MySQL-Edition/1/)
-- [GitHub issues](https://github.com/Tommy228/TTTDamagelogs/issues)
-
-
-# License
-
-    TTT Damagelogs is an administration tool designed for TTT to allow handling RDM situations using different tools.
-    Copyright (C) 2012-2018 Ismail Ouazzany
-    
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
