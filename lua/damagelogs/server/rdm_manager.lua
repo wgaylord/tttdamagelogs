@@ -602,7 +602,7 @@ net.Receive("DL_UpdateStatus", function(_len, ply)
                     steamID = ply:SteamID()
                 },
                 secondsTaken = os.time() - (tbl.handedOffToAdminsAt or os.time()),
-                conclusion = tbl.conclusion
+                conclusion = tbl.conclusion or nil
             }
         }
         Damagelog:DiscordMessage(discordUpdate)
@@ -664,7 +664,7 @@ net.Receive("DL_Conclusion", function(_len, ply)
                     steamID = ply:SteamID()
                 },
                 secondsTaken = os.time() - (tbl.handedOffToAdminsAt or os.time()),
-                conclusion = tbl.conclusion
+                conclusion = tbl.conclusion or nil
             }
         }
         Damagelog:DiscordMessage(discordUpdate)

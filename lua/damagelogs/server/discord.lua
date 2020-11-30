@@ -120,11 +120,13 @@ function Damagelog:DiscordMessage(discordUpdate)
         }
         table.insert(data.fields, reportHandlerTimeRow)
 
-        local conclusionRow = {
-            name = TTTLogTranslate(nil, "webhook_report_finished_conclusion") .. ":",
-            value = discordUpdate.reportHandled.conclusion
-        }
-        table.insert(data.fields, conclusionRow)
+        if(discordUpdate.reportHandled.conclusion != nil) then
+            local conclusionRow = {
+                name = TTTLogTranslate(nil, "webhook_report_finished_conclusion") .. ":",
+                value = discordUpdate.reportHandled.conclusion
+            }
+            table.insert(data.fields, conclusionRow)
+        end
     end
 
 
