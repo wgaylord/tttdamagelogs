@@ -30,7 +30,10 @@ Get the latest version from the [Releases](https://github.com/BadgerCode/tttdama
 <br>
 
 ## Support
-Please raise an issue in the [Issues](https://github.com/BadgerCode/tttdamagelogs/issues) section.
+For guides on using & configuring this addon, please check our [wiki](https://github.com/BadgerCode/tttdamagelogs/wiki).
+
+If you have a question, issue or feature request, please raise an issue in the [Issues](https://github.com/BadgerCode/tttdamagelogs/issues) section.
+
 
 <br>
 
