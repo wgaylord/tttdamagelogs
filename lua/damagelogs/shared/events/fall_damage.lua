@@ -28,11 +28,11 @@ function event:EntityTakeDamage(ent, dmginfo)
                 [EVENT_DETAILS.WasVictimPushed] = false
             }
 
-            local push = ent.was_pushed
+            local playerThatPushed = ent:GetPlayerThatRecentlyPushedMe()
 
-            if push and math.max(push.t or 0, push.hurt or 0) > CurTime() - 4 then
+            if playerThatPushed != nil then
                 tbl[EVENT_DETAILS.WasVictimPushed]  = true
-                tbl[EVENT_DETAILS.AttackerId]       = push.att:GetDamagelogID()
+                tbl[EVENT_DETAILS.AttackerId]       = playerThatPushed:GetDamagelogID()
             end
 
             self.CallEvent(tbl)
