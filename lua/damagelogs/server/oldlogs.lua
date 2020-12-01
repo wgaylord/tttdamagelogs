@@ -200,17 +200,15 @@ hook.Add("TTTEndRound", "Damagelog_EndRound", function()
 end)
 
 net.Receive("DL_AskLogsList", function(_, ply)
-    net.Start("DL_SendLogsList")
+    -- Check if there aren't any old logs available
+    if not(Damagelog.OlderDate and Damagelog.LatestDate) then return end
 
-    if Damagelog.OlderDate and Damagelog.LatestDate then
-        net.WriteUInt(1, 1)
-        net.WriteTable(Damagelog.OldLogsDays)
+    local payload = util.Compress(util.TableToJSON(Damagelog.OldLogsDays))
+    net.Start("DL_SendLogsList")
         net.WriteUInt(Damagelog.OlderDate, 32)
         net.WriteUInt(Damagelog.LatestDate, 32)
-    else
-        net.WriteUInt(0, 1)
-    end
-
+        net.WriteUInt(string.len(payload), 32)
+        net.WriteData(payload, string.len(payload))
     net.Send(ply)
 end)
 
