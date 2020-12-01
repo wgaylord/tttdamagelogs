@@ -330,19 +330,16 @@ function Damagelog:DrawOldLogs()
 end
 
 net.Receive("DL_SendLogsList", function()
-    local received = net.ReadUInt(1) == 1
+    -- Logs loaded too early?
+    if IsValid(Damagelog.OldLogs) == false then return end
 
-    if not received then
-        return
-    end
-
-    Damagelog.OldLogsDays = net.ReadTable()
     Damagelog.OlderDate = net.ReadUInt(32)
     Damagelog.LatestDate = net.ReadUInt(32)
 
-    if IsValid(Damagelog.OldLogs) then
-        Damagelog.OldLogs:UpdateDates()
-    end
+    local length = net.ReadUInt(32)
+    Damagelog.OldLogsDays = util.JSONToTable(util.Decompress(net.ReadData(length)))
+
+    Damagelog.OldLogs:UpdateDates()
 end)
 
 net.Receive("DL_SendOldLog", function()

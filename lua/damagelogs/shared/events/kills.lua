@@ -10,40 +10,51 @@ local event = {}
 event.Type = "KILL"
 
 function event:DoPlayerDeath(ply, attacker, dmginfo)
-    if IsValid(attacker) and attacker:IsPlayer() and attacker ~= ply and not (attacker.IsGhost and attacker:IsGhost()) then
-        local scene = false
-        Damagelog.SceneID = Damagelog.SceneID + 1
-        scene = Damagelog.SceneID
-        Damagelog.SceneRounds[scene] = Damagelog.CurrentRound
+    -- If the player was pushed, set the attacker to the person that pushed them
+    local playerThatPushed = ply:GetPlayerThatRecentlyPushedMe()
+    if (playerThatPushed != nil) then
+        attacker = playerThatPushed
+    end
 
-        local tbl = {
-            [1] = attacker:GetDamagelogID(),
-            [2] = ply:GetDamagelogID(),
-            [3] = Damagelog:WeaponFromDmg(dmginfo),
-            [4] = scene
-        }
+    -- Ignore spectators
+    if (ply.IsGhost and ply:IsGhost()) then return end
 
-        self.CallEvent(tbl)
+    -- Ignore suicides/drownings. These are handled in the suicide.lua event file
+    -- This may also ignore environmental deaths, caused by another player
+    if (IsValid(attacker) and attacker:IsPlayer() and attacker != ply) == false then return end
 
-        if scene then
-            timer.Simple(0.6, function()
-                Damagelog.Death_Scenes[scene] = table.Copy(Damagelog.Records)
-            end)
+    local scene = false
+    Damagelog.SceneID = Damagelog.SceneID + 1
+    scene = Damagelog.SceneID
+    Damagelog.SceneRounds[scene] = Damagelog.CurrentRound
+
+    local tbl = {
+        [1] = attacker:GetDamagelogID(),
+        [2] = ply:GetDamagelogID(),
+        [3] = Damagelog:WeaponFromDmg(dmginfo),
+        [4] = scene
+    }
+
+    self.CallEvent(tbl)
+
+    if scene then
+        timer.Simple(0.6, function()
+            Damagelog.Death_Scenes[scene] = table.Copy(Damagelog.Records)
+        end)
+    end
+
+    if GetRoundState() == ROUND_ACTIVE then
+        net.Start("DL_Ded")
+
+        if not ROLES and attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE) or ROLES and attacker:HasTeamRole(TEAM_TRAITOR) and not ply:HasTeamRole(TEAM_TRAITOR) then
+            net.WriteUInt(0, 1)
+        else
+            net.WriteUInt(1, 1)
+            net.WriteString(attacker:Nick())
         end
 
-        if GetRoundState() == ROUND_ACTIVE then
-            net.Start("DL_Ded")
-
-            if not ROLES and attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE) or ROLES and attacker:HasTeamRole(TEAM_TRAITOR) and not ply:HasTeamRole(TEAM_TRAITOR) then
-                net.WriteUInt(0, 1)
-            else
-                net.WriteUInt(1, 1)
-                net.WriteString(attacker:Nick())
-            end
-
-            net.Send(ply)
-            ply:SetNWEntity("DL_Killer", attacker)
-        end
+        net.Send(ply)
+        ply:SetNWEntity("DL_Killer", attacker)
     end
 end
 

@@ -20,14 +20,24 @@ surface.CreateFont("RDM_Manager_DNA", {
 })
 
 Damagelog.ReportsQueue = Damagelog.ReportsQueue or {}
+
+local renderedReports = {}
+
+local function MarkReportAsRendered(report)
+    renderedReports[string.format("%s:%s", tostring(report.index), tostring(report.previous or "nil"))] = true
+end
+
+local function HasReportBeenRendered(report)
+    return renderedReports[string.format("%s:%s", tostring(report.index), tostring(report.previous or "nil"))] or false
+end
+
 local ReportFrame
 
 local function BuildReportFrame(report)
     if IsValid(ReportFrame) and report then
-        for _, v in pairs(Damagelog.ReportsQueue) do
-            if v.index == report.index and v.previous == report.previous then
-                return
-            end
+        if HasReportBeenRendered(report) then
+            print("Skipping new report " .. tostring(report.index or "nil") .. " as this should already be in the report menu?")
+            return
         end
 
         ReportFrame:AddReport(report)
@@ -117,10 +127,12 @@ local function BuildReportFrame(report)
                     Button:SetEnabled(false)
                     Info:SetText(TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"))
                     Info:SetInfoColor("orange")
+
+
                     net.Start("DL_SendAnswer")
-                    net.WriteUInt(current and 1 or 0, 1)
-                    net.WriteString(text)
-                    net.WriteUInt(report.index, 16)
+                        net.WriteUInt(current and 1 or 0, 1)
+                        net.WriteString(text)
+                        net.WriteUInt(report.index, 16)
                     net.SendToServer()
 
                     for _, v in pairs(Damagelog.ReportsQueue) do
@@ -146,6 +158,8 @@ local function BuildReportFrame(report)
             local title = report.adminReport and string.format(TTTLogTranslate(GetDMGLogLang, "AdminReportID"), report.index) or report.victim_nick
             ColumnSheet:AddSheet(title, PanelList, "icon16/report_user.png")
             PanelList:SetSize(430, 310)
+
+            MarkReportAsRendered(report)
         end
 
         for _, report in ipairs(Damagelog.ReportsQueue) do

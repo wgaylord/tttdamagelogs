@@ -12,7 +12,7 @@ end
 local aslay = mode == 1
 
 if not sql.TableExists("damagelog_autoslay") then
-    sql.Query([[CREATE TABLE damagelog_autoslay (
+    Damagelog.SQLiteDatabase.Query([[CREATE TABLE damagelog_autoslay (
 		ply varchar(32) NOT NULL,
 		admins tinytext NOT NULL,
 		slays SMALLINT UNSIGNED NOT NULL,
@@ -22,7 +22,7 @@ if not sql.TableExists("damagelog_autoslay") then
 end
 
 if not sql.TableExists("damagelog_names") then
-    sql.Query([[CREATE TABLE damagelog_names (
+    Damagelog.SQLiteDatabase.Query([[CREATE TABLE damagelog_names (
 		steamid varchar(32),
 		name varchar(255));
 	]])
@@ -39,16 +39,15 @@ hook.Add("PlayerAuthed", "DamagelogNames", function(ply, steamid)
     end
 
     local name = ply:Nick()
-    local query = sql.QueryValue("SELECT name FROM damagelog_names WHERE steamid = '" .. steamid .. "' LIMIT 1")
+    local query = Damagelog.SQLiteDatabase.QueryValue("SELECT name FROM damagelog_names WHERE steamid = '" .. steamid .. "' LIMIT 1")
 
     if not query then
-        sql.Query("INSERT INTO damagelog_names (`steamid`, `name`) VALUES('" .. steamid .. "', " .. sql.SQLStr(name) .. ");")
+        Damagelog.SQLiteDatabase.Query("INSERT INTO damagelog_names (`steamid`, `name`) VALUES('" .. steamid .. "', " .. sql.SQLStr(name) .. ");")
     elseif query ~= name then
-        sql.Query("UPDATE damagelog_names SET name = " .. sql.SQLStr(name) .. " WHERE steamid = '" .. steamid .. "' LIMIT 1;")
+        Damagelog.SQLiteDatabase.Query("UPDATE damagelog_names SET name = " .. sql.SQLStr(name) .. " WHERE steamid = '" .. steamid .. "' LIMIT 1;")
     end
 
-    local c = sql.Query("SELECT slays FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1;")
-
+    local c = Damagelog.SQLiteDatabase.QueryValue("SELECT slays FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1;")
     if not tonumber(c) then
         c = 0
     end
@@ -67,7 +66,7 @@ function Damagelog:GetName(steamid)
         end
     end
 
-    local query = sql.QueryValue("SELECT name FROM damagelog_names WHERE steamid = '" .. steamid .. "' LIMIT 1;")
+    local query = Damagelog.SQLiteDatabase.QueryValue("SELECT name FROM damagelog_names WHERE steamid = '" .. steamid .. "' LIMIT 1;")
 
     return query or "<Error>"
 end
@@ -164,7 +163,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
     end
 
     if slays == 0 then
-        sql.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. steamid .. "';")
+        Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. steamid .. "';")
         local name = self:GetName(steamid)
 
         if target then
@@ -175,7 +174,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
         NetworkSlays(steamid, 0)
     else
-        local data = sql.QueryRow("SELECT * FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1")
+        local data = Damagelog.SQLiteDatabase.QuerySingle("SELECT * FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1")
 
         if data then
             local adminid
@@ -218,7 +217,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 end
             else
                 local difference = slays - old_slays
-                sql.Query(string.format("UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = '%s' LIMIT 1;", sql.SQLStr(new_admins), slays, sql.SQLStr(reason), tostring(os.time()), steamid))
+                Damagelog.SQLiteDatabase.Query(string.format("UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = '%s' LIMIT 1;", sql.SQLStr(new_admins), slays, sql.SQLStr(reason), tostring(os.time()), steamid))
                 local list = self:CreateSlayList(old_steamids)
                 local nick = self:GetName(steamid)
                 local msg
@@ -252,7 +251,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 admins = util.TableToJSON({"Console"})
             end
 
-            sql.Query(string.format("INSERT INTO damagelog_autoslay (`admins`, `ply`, `slays`, `reason`, `time`) VALUES (%s, '%s', %i, %s, %s);", sql.SQLStr(admins), steamid, slays, sql.SQLStr(reason), tostring(os.time())))
+            Damagelog.SQLiteDatabase.Query(string.format("INSERT INTO damagelog_autoslay (`admins`, `ply`, `slays`, `reason`, `time`) VALUES (%s, '%s', %i, %s, %s);", sql.SQLStr(admins), steamid, slays, sql.SQLStr(reason), tostring(os.time())))
             local msg
 
             if target then
@@ -330,7 +329,7 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                 v:SetNWBool("PlayedSRound", true)
             end)
 
-            local data = sql.QueryRow("SELECT * FROM damagelog_autoslay WHERE ply = '" .. v:SteamID() .. "' LIMIT 1")
+            local data = Damagelog.SQLiteDatabase.QuerySingle("SELECT * FROM damagelog_autoslay WHERE ply = '" .. v:SteamID() .. "' LIMIT 1")
 
             if data then
                 if aslay then
@@ -400,11 +399,11 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                 slays = slays - 1
 
                 if slays <= 0 then
-                    sql.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. v:SteamID() .. "';")
+                    Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. v:SteamID() .. "';")
                     NetworkSlays(steamid, 0)
                     v.AutoslaysLeft = 0
                 else
-                    sql.Query("UPDATE damagelog_autoslay SET slays = slays - 1 WHERE ply = '" .. v:SteamID() .. "';")
+                    Damagelog.SQLiteDatabase.Query("UPDATE damagelog_autoslay SET slays = slays - 1 WHERE ply = '" .. v:SteamID() .. "';")
                     NetworkSlays(steamid, slays - 1)
 
                     if tonumber(v.AutoslaysLeft) then
