@@ -19,6 +19,7 @@ AddCSLuaFile("damagelogs/client/settings.lua")
 AddCSLuaFile("damagelogs/shared/autoslay.lua")
 include("damagelogs/config/config.lua")
 include("damagelogs/config/mysqloo.lua")
+include("damagelogs/server/sqlite.lua")
 include("damagelogs/shared/lang.lua")
 include("damagelogs/server/oldlogs.lua")
 include("damagelogs/shared/notify.lua")
@@ -94,6 +95,19 @@ function Player:AddToDamagelogRoles(spawned)
     self:SetDamagelogID(id)
 end
 
+function Player:GetPlayerThatRecentlyPushedMe()
+    local pushInfo = self.was_pushed
+    if(pushInfo == nil) then return nil end
+
+    -- player.was_pushed is never reset. We must always check the time on the push event.
+    -- Copied from TTT: Only consider pushes in the last 4 seconds
+    local pushTime = math.max(pushInfo.t or 0, pushInfo.hurt or 0)
+    if(pushTime < CurTime() - 4) then return nil end
+
+    return pushInfo.att
+end
+
+
 function Damagelog:TTTBeginRound()
     self.Time = 0
 
@@ -154,15 +168,16 @@ end)
 function Damagelog:WeaponFromDmg(dmg)
     local inf = dmg:GetInflictor()
     local wep = nil
+    local isWorldDamage = inf != nil and inf.IsWorld and inf:IsWorld()
 
-    if IsValid(inf) then
+    if IsValid(inf) or isWorldDamage then
         if inf:IsWeapon() or inf.Projectile then
             wep = inf
         elseif dmg:IsDamageType(DMG_BLAST) then
             wep = "DMG_BLAST"
         elseif dmg:IsDamageType(DMG_DIRECT) or dmg:IsDamageType(DMG_BURN) then
             wep = "DMG_BURN"
-        elseif dmg:IsDamageType(DMG_CRUSH) then
+        elseif dmg:IsDamageType(DMG_CRUSH) or dmg:IsDamageType(DMG_FALL) then
             wep = "DMG_CRUSH"
         elseif dmg:IsDamageType(DMG_SLASH) then
             wep = "DMG_SLASH"
@@ -233,7 +248,7 @@ function Damagelog:SendDamagelog(ply, round)
 
                 query:start()
             else
-                local query = sql.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. self.last_round_map)
+                local query = Damagelog.SQLiteDatabase.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. self.last_round_map)
 
                 if not query then
                     return

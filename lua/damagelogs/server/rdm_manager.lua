@@ -601,7 +601,8 @@ net.Receive("DL_UpdateStatus", function(_len, ply)
                     nick = ply:Nick(),
                     steamID = ply:SteamID()
                 },
-                secondsTaken = os.time() - (tbl.handedOffToAdminsAt or os.time())
+                secondsTaken = os.time() - (tbl.handedOffToAdminsAt or os.time()),
+                conclusion = tbl.conclusion or nil
             }
         }
         Damagelog:DiscordMessage(discordUpdate)
@@ -638,6 +639,36 @@ net.Receive("DL_Conclusion", function(_len, ply)
 
     Damagelog:SendLogToVictim(tbl)
     UpdatePreviousReports()
+
+    if tbl.status == RDM_MANAGER_FINISHED then
+        local discordUpdate = {
+            reportId = index,
+            round = Damagelog.CurrentRound or 0,
+            victim = {
+                nick = tbl.victim_nick,
+                steamID = tbl.victim
+            },
+            attacker = {
+                nick = tbl.attacker_nick,
+                steamID = tbl.attacker
+            },
+            adminOnline = AreAdminsOnline(),
+            reportMessage = tbl.message,
+            responseMessage = tbl.response or "Unknown",
+            reportForgiven = {
+                forgiven = tbl.canceled
+            },
+            reportHandled = {
+                admin = {
+                    nick = ply:Nick(),
+                    steamID = ply:SteamID()
+                },
+                secondsTaken = os.time() - (tbl.handedOffToAdminsAt or os.time()),
+                conclusion = tbl.conclusion or nil
+            }
+        }
+        Damagelog:DiscordMessage(discordUpdate)
+    end
 end)
 
 hook_Add("PlayerAuthed", "RDM_Manager", function(ply)
