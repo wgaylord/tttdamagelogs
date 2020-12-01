@@ -44,20 +44,26 @@ hook.Add("InitPostEntity", "Damagelog_InitPostHTTP", function()
     local client = LocalPlayer()
 
     if client:IsAdmin() or client:IsSuperAdmin() then
-        http.Fetch("https://raw.githubusercontent.com/Tommy228/TTTDamagelogs/master/version.md", function(version)
-            local cur_version = string.Explode(".", Damagelog.VERSION)
-            local tbl = string.Explode(".", version)
+        http.Fetch("https://raw.githubusercontent.com/BadgerCode/tttdamagelogs/master/version.md", function(responseBody)
+            local githubVersionInfo = string.Explode(".", string.Trim(responseBody))
+            local githubVersion = {
+                major = tonumber(githubVersionInfo[1]),
+                minor = tonumber(githubVersionInfo[2]),
+                patch = tonumber(githubVersionInfo[3])
+            }
 
-            for i = 1, 3 do
-                tbl[i] = tonumber(tbl[i])
-                cur_version[i] = tonumber(cur_version[i])
-            end
+            local currentVersionInfo = string.Explode(".", Damagelog.VERSION)
+            local currentVersion = {
+                major = tonumber(currentVersionInfo[1]),
+                minor = tonumber(currentVersionInfo[2]),
+                patch = tonumber(currentVersionInfo[3])
+            }
 
-            if tbl[1] > cur_version[1] then
+            if (githubVersion.major > currentVersion.major) then
                 outdated = true
-            elseif tbl[1] == cur_version[1] and tbl[2] > cur_version[2] then
+            elseif (githubVersion.major == currentVersion.major) and (githubVersion.minor > currentVersion.minor) then
                 outdated = true
-            elseif tbl[1] == cur_version[1] and tbl[2] == cur_version[2] and tbl[3] > cur_version[3] then
+            elseif (githubVersion.major == currentVersion.major) and (githubVersion.minor == currentVersion.minor) and (githubVersion.patch > currentVersion.patch) then
                 outdated = true
             end
         end)
