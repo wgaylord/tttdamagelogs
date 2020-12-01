@@ -32,7 +32,8 @@ local function CreateCommand()
     end
 
     function ulx.cslays(calling_ply, target)
-        local data = sql.QueryRow("SELECT * FROM damagelog_autoslay WHERE ply = '" .. target:SteamID() .. "' LIMIT 1")
+        -- TODO: Support MySQL
+        local data = Damagelog.SQLiteDatabase.QuerySingle("SELECT * FROM damagelog_autoslay WHERE ply = '" .. target:SteamID() .. "' LIMIT 1")
         local txt = aslay and "slays" or "jails"
         local p = "has"
 
@@ -54,7 +55,8 @@ local function CreateCommand()
             return
         end
 
-        local data = sql.QueryRow("SELECT * FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1")
+        -- TODO: Support MySQL
+        local data = Damagelog.SQLiteDatabase.QuerySingle("SELECT * FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1")
         local txt = aslay and "slays" or "jails"
 
         if data then

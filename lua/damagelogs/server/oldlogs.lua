@@ -7,9 +7,6 @@ util.AddNetworkString("DL_SendOldLogRounds")
 Damagelog.previous_reports = {}
 local limit = os.time() - Damagelog.LogDays * 86400 --  24 * 60 * 60
 
-local function GetLogsCount_SQLite()
-    return sql.QueryValue("SELECT COUNT(id) FROM damagelog_oldlogs_v3")
-end
 
 if Damagelog.Use_MySQL then
     require("mysqloo")
@@ -114,7 +111,7 @@ if Damagelog.Use_MySQL then
     -- Get the list of days and send it to the client
 else
     if not sql.TableExists("damagelog_oldlogs_v3") then
-        sql.Query([[CREATE TABLE IF NOT EXISTS damagelog_oldlogs_v3 (
+        Damagelog.SQLiteDatabase.Query([[CREATE TABLE IF NOT EXISTS damagelog_oldlogs_v3 (
 			id INT UNSIGNED NOT NULL PRIMARY KEY,
 			year INTEGER NOT NULL,
 			month INTEGER NOT NULL,
@@ -127,32 +124,32 @@ else
     end
 
     if not sql.TableExists("damagelog_weapons") then
-        sql.Query([[CREATE TABLE IF NOT EXISTS damagelog_weapons (
+        Damagelog.SQLiteDatabase.Query([[CREATE TABLE IF NOT EXISTS damagelog_weapons (
 			class varchar(255) NOT NULL,
 			name varchar(255) NOT NULL,
 			PRIMARY KEY (class));
 		]])
     end
 
-    Damagelog.OlderDate = tonumber(sql.QueryValue("SELECT MIN(date) FROM damagelog_oldlogs_v3 WHERE damagelog IS NOT NULL;"))
-    Damagelog.LatestDate = tonumber(sql.QueryValue("SELECT MAX(date) FROM damagelog_oldlogs_v3 WHERE damagelog IS NOT NULL;"))
-    sql.Query("DELETE FROM damagelog_oldlogs_v3 WHERE date <= " .. limit .. ";")
+    Damagelog.OlderDate = tonumber(Damagelog.SQLiteDatabase.QueryValue("SELECT MIN(date) FROM damagelog_oldlogs_v3 WHERE damagelog IS NOT NULL;"))
+    Damagelog.LatestDate = tonumber(Damagelog.SQLiteDatabase.QueryValue("SELECT MAX(date) FROM damagelog_oldlogs_v3 WHERE damagelog IS NOT NULL;"))
+    Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_oldlogs_v3 WHERE date <= " .. limit .. ";")
     Damagelog.OldLogsDays = {}
-    local years = sql.Query("SELECT DISTINCT year FROM damagelog_oldlogs_v3;") or {}
+    local years = Damagelog.SQLiteDatabase.Query("SELECT DISTINCT year FROM damagelog_oldlogs_v3;") or {}
 
     for _, year in pairs(years) do
         local y = tonumber(year.year)
 
         if y then
             Damagelog.OldLogsDays[y] = {}
-            local months = sql.Query("SELECT DISTINCT month FROM damagelog_oldlogs_v3 WHERE year = " .. y .. ";") or {}
+            local months = Damagelog.SQLiteDatabase.Query("SELECT DISTINCT month FROM damagelog_oldlogs_v3 WHERE year = " .. y .. ";") or {}
 
             for _, month in pairs(months) do
                 local m = tonumber(month.month)
 
                 if m then
                     Damagelog.OldLogsDays[y][m] = {}
-                    local days = sql.Query("SELECT DISTINCT day FROM damagelog_oldlogs_v3 WHERE year = " .. y .. " AND month = " .. m .. ";") or {}
+                    local days = Damagelog.SQLiteDatabase.Query("SELECT DISTINCT day FROM damagelog_oldlogs_v3 WHERE year = " .. y .. " AND month = " .. m .. ";") or {}
 
                     for _, day in pairs(days) do
                         local d = tonumber(day.day)
@@ -191,8 +188,11 @@ hook.Add("TTTEndRound", "Damagelog_EndRound", function()
             local query = Damagelog.database:query(insert)
             query:start()
         elseif not Damagelog.Use_MySQL then
-            local insert = string.format("INSERT INTO damagelog_oldlogs_v3(`id`, `year`, `month`, `day`, `date`, `round`, `map`, `damagelog`) VALUES(%i, %i, %i, %i, %i, %i, \"%s\", %s);", GetLogsCount_SQLite() + 1, year, month, day, t, Damagelog.CurrentRound, game.GetMap(), sql.SQLStr(logs))
-            sql.Query(insert)
+            local newRowID = Damagelog.SQLiteDatabase.QueryValue("SELECT MAX(id)+1 FROM damagelog_oldlogs_v3")
+            Damagelog.SQLiteDatabase.Query(string.format(
+                "INSERT INTO damagelog_oldlogs_v3(`id`, `year`, `month`, `day`, `date`, `round`, `map`, `damagelog`) "
+                .. "VALUES(%i, %i, %i, %i, %i, %i, \"%s\", %s);",
+                newRowID, year, month, day, t, Damagelog.CurrentRound, game.GetMap(), sql.SQLStr(logs)))
         end
 
         file.Write("damagelog/damagelog_lastroundmap.txt", tostring(t))
@@ -200,17 +200,15 @@ hook.Add("TTTEndRound", "Damagelog_EndRound", function()
 end)
 
 net.Receive("DL_AskLogsList", function(_, ply)
-    net.Start("DL_SendLogsList")
+    -- Check if there aren't any old logs available
+    if not(Damagelog.OlderDate and Damagelog.LatestDate) then return end
 
-    if Damagelog.OlderDate and Damagelog.LatestDate then
-        net.WriteUInt(1, 1)
-        net.WriteTable(Damagelog.OldLogsDays)
+    local payload = util.Compress(util.TableToJSON(Damagelog.OldLogsDays))
+    net.Start("DL_SendLogsList")
         net.WriteUInt(Damagelog.OlderDate, 32)
         net.WriteUInt(Damagelog.LatestDate, 32)
-    else
-        net.WriteUInt(0, 1)
-    end
-
+        net.WriteUInt(string.len(payload), 32)
+        net.WriteData(payload, string.len(payload))
     net.Send(ply)
 end)
 
@@ -256,7 +254,7 @@ net.Receive("DL_AskOldLogRounds", function(_, ply)
         query:start()
     else
         local query_str = "SELECT date,map,round FROM damagelog_oldlogs_v3 WHERE date BETWEEN strftime(\"%s\", \"" .. _date .. " 00:00:00\") AND strftime(\"%s\", \"" .. _date .. " 23:59:59\") ORDER BY date ASC;"
-        local result = sql.Query(query_str)
+        local result = Damagelog.SQLiteDatabase.Query(query_str)
 
         if not result then
             result = {}
@@ -291,7 +289,7 @@ net.Receive("DL_AskOldLog", function(_, ply)
 
             query:start()
         elseif not Damagelog.Use_MySQL then
-            local query = sql.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. _time)
+            local query = Damagelog.SQLiteDatabase.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. _time)
 
             if query then
                 SendLogs(ply, util.Compress(query), false)
