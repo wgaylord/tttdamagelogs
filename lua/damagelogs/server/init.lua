@@ -19,6 +19,7 @@ AddCSLuaFile("damagelogs/client/settings.lua")
 AddCSLuaFile("damagelogs/shared/autoslay.lua")
 include("damagelogs/config/config.lua")
 include("damagelogs/config/mysqloo.lua")
+include("damagelogs/server/sqlite.lua")
 include("damagelogs/shared/lang.lua")
 include("damagelogs/server/oldlogs.lua")
 include("damagelogs/shared/notify.lua")
@@ -247,7 +248,7 @@ function Damagelog:SendDamagelog(ply, round)
 
                 query:start()
             else
-                local query = sql.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. self.last_round_map)
+                local query = Damagelog.SQLiteDatabase.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. self.last_round_map)
 
                 if not query then
                     return
