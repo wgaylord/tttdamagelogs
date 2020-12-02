@@ -1,0 +1,10 @@
+{
+    "title": "TTT Damage Logs & RDM Manager",
+    "description": "",
+    "type": "servercontent",
+    "tags": [ ],
+    "ignore": [
+        ".git/*",
+        "README.md"
+    ]
+}

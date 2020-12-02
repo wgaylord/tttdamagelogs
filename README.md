@@ -3,6 +3,10 @@ Created by Tommy228
 
 This is an administration tool which allows server admins to handle player reports during a game of Trouble in Terrorist Town.
 
+![Preview](https://i.imgur.com/9eFdulZ.png)
+
+---
+
 <br>
 
 ## Features
@@ -54,6 +58,18 @@ If you have a question, issue or feature request, please raise an issue in the [
 * The server's addon folder is `gmod-test-server/garrysmod/addons`
 * The damage logs addon folder is `gmod-test-server/garrysmod/addons/tttdamagelogs`
 * The config file can be found at `gmod-test-server/garrysmod/addons/tttdamagelogs/lua/config/config.lua`
+
+<br>
+
+---
+
+<br>
+
+## Contributing
+If you would like to make a change to the project, please submit a [pull request](https://github.com/BadgerCode/tttdamagelogs/pulls).
+
+Please avoid making large code refactoring changes as these make pull requests harder to review.
+
 
 
 <br>
