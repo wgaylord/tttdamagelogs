@@ -5,6 +5,11 @@ This is an administration tool which allows server admins to handle player repor
 
 ![Preview](https://i.imgur.com/9eFdulZ.png)
 
+<br>
+
+Get it on the Steam Workshop:<br>
+https://steamcommunity.com/sharedfiles/filedetails/?id=2306802961
+
 ---
 
 <br>
