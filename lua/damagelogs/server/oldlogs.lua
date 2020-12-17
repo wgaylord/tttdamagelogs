@@ -188,7 +188,7 @@ hook.Add("TTTEndRound", "Damagelog_EndRound", function()
             local query = Damagelog.database:query(insert)
             query:start()
         elseif not Damagelog.Use_MySQL then
-            local newRowID = Damagelog.SQLiteDatabase.QueryValue("SELECT MAX(id)+1 FROM damagelog_oldlogs_v3")
+            local newRowID = Damagelog.SQLiteDatabase.QueryValue("SELECT IFNULL(MAX(id), 0)+1 FROM damagelog_oldlogs_v3")
             Damagelog.SQLiteDatabase.Query(string.format(
                 "INSERT INTO damagelog_oldlogs_v3(`id`, `year`, `month`, `day`, `date`, `round`, `map`, `damagelog`) "
                 .. "VALUES(%i, %i, %i, %i, %i, %i, \"%s\", %s);",
