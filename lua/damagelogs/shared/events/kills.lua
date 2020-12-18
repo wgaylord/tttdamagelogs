@@ -12,7 +12,7 @@ event.Type = "KILL"
 function event:DoPlayerDeath(ply, attacker, dmginfo)
     -- If the player was pushed, set the attacker to the person that pushed them
     local playerThatPushed = ply:GetPlayerThatRecentlyPushedMe()
-    if (playerThatPushed != nil) then
+    if (playerThatPushed != nil and dmginfo:GetDamageType() == DMG_FALL and attacker:IsWorld()) then
         attacker = playerThatPushed
     end
 
