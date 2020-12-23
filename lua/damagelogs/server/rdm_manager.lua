@@ -72,8 +72,21 @@ end
 
 local Player = FindMetaTable("Player")
 
+function Player:ResetSubmittedReports(ply)
+    self.Reported = {}
+end
+
+function Player:TrackSubmittedReport(ply)
+    if(self.Reported == nil) then self:ResetSubmittedReports() end
+    self.Reported[ply:AccountID()] = true
+end
+
+function Player:HasReportedPlayer(ply)
+    return self.Reported and (self.Reported[ply:SteamID()] == true)
+end
+
 function Player:RemainingReports()
-    return 2 - #self.Reported
+    return 2 - (self.Reported and #self.Reported or 0)
 end
 
 function Player:UpdateReports()
@@ -158,7 +171,7 @@ hook_Add("TTTBeginRound", "Damagelog_RDMManger", function()
             v.CanReport = true
         end
 
-        table_Empty(v.Reported)
+        v:ResetSubmittedReports()
     end
 end)
 
@@ -325,6 +338,7 @@ function HandlePlayerReport(ply, attacker, message, reportType)
     message = string_gsub(string_gsub(message, "[^%g\128-\191\194-\197\208-\210 ]+", ""), "%s+", " ")
     local adminOnline = AreAdminsOnline()
 
+    -- TODO: Is this check correct? This means all the logic below only runs if the player isn't able to report anyway?
     if not ply:CanUseRDMManager() then
         if not Damagelog.NoStaffReports and not adminOnline then
             ply:Damagelog_Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(ply.DMGLogLang, "NoAdmins"), 4, "buttons/weapon_cant_buy.wav")
@@ -370,12 +384,12 @@ function HandlePlayerReport(ply, attacker, message, reportType)
         return
     end
 
-    if table_HasValue(ply.Reported, attacker) then
+    if ply:HasReportedPlayer(attacker) then
         ply:Damagelog_Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(ply.DMGLogLang, "AlreadyReported"), 5, "buttons/weapon_cant_buy.wav")
         return
     end
 
-    table_insert(ply.Reported, attacker)
+    ply:TrackSubmittedReport(attacker)
 
     local newReport = {
         victim = ply:SteamID(),
@@ -672,7 +686,7 @@ net.Receive("DL_Conclusion", function(_len, ply)
 end)
 
 hook_Add("PlayerAuthed", "RDM_Manager", function(ply)
-    ply.Reported = {}
+    ply:ResetSubmittedReports()
     ply:UpdateReports()
 
     for _, tbl in pairs(Damagelog.Reports) do
