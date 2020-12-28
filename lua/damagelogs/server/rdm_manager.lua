@@ -82,7 +82,7 @@ function Player:TrackSubmittedReport(ply)
 end
 
 function Player:HasReportedPlayer(ply)
-    return self.Reported and (self.Reported[ply:SteamID()] == true)
+    return self.Reported and (self.Reported[ply:AccountID()] == true)
 end
 
 function Player:RemainingReports()
