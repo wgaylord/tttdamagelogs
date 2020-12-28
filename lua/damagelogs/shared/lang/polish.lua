@@ -218,7 +218,6 @@ DamagelogLang.polish = {
     NoWeapon = "<Brak broni>",
     scorpse = "- ciało",
     TakeAction = "Działania",
-    HaventReported = "Nikogo nie zgłosiłeś! Brak zgłoszeń do sprawdzenia.",
     RDMConclusion = "Wynik",
     ViewPreviousReports = "Zobacz zgłoszenia",
     YourReport = "Twoje zgłoszenie",

@@ -29,10 +29,6 @@ Damagelog.Reports = Damagelog.Reports or {
     Current = {}
 }
 
-Damagelog.getmreports = {
-    id = {index, victim, message}
-}
-
 if not Damagelog.Reports.Previous then
     if file.Exists("damagelog/prevreports.txt", "DATA") then
         Damagelog.Reports.Previous = util_JSONToTable(file.Read("damagelog/prevreports.txt", "DATA"))
@@ -189,35 +185,6 @@ function Damagelog:SendLogToVictim(tbl)
     net.Start("DL_SendOwnReportInfo")
     net.WriteTable(tbl)
     net.Send(victim)
-end
-
-function Damagelog:GetMReports(ply)
-    if not IsValid(ply) then
-        return
-    end
-
-    local found = false
-
-    if not ply.CanReport then
-        ply:Damagelog_Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(ply.DMGLogLang, "NeedToPlay"), 4, "buttons/weapon_cant_buy.wav")
-    else
-        for _, v in pairs(Damagelog.Reports.Current) do
-            if #v.victim > 0 then
-                if v.victim ~= ply:SteamID() then
-                    return
-                end
-
-                found = true
-                net.Start("DL_AllowMReports")
-                net.WriteTable(v)
-                net.Send(ply)
-            end
-        end
-
-        if not found then
-            ply:Damagelog_Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(ply.DMGLogLang, "HaventReported"), 4, "buttons/weapon_cant_buy.wav")
-        end
-    end
 end
 
 net.Receive("DL_AskOwnReportInfo", function(length, ply)
@@ -409,9 +376,6 @@ function HandlePlayerReport(ply, attacker, message, reportType)
     }
 
     local index = table_insert(Damagelog.Reports.Current, newReport)
-    Damagelog.getmreports.id[1] = {}
-    Damagelog.getmreports.id[1].victim = ply:SteamID()
-    Damagelog.getmreports.id[1].index = index
     Damagelog.Reports.Current[index].index = index
 
     local discordUpdate = {
