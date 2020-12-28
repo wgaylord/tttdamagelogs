@@ -73,20 +73,20 @@ end
 local Player = FindMetaTable("Player")
 
 function Player:ResetSubmittedReports(ply)
-    self.Reported = {}
+    self.ReportedPlayers = {}
 end
 
 function Player:TrackSubmittedReport(ply)
-    if(self.Reported == nil) then self:ResetSubmittedReports() end
-    self.Reported[ply:AccountID()] = true
+    if(self.ReportedPlayers == nil) then self:ResetSubmittedReports() end
+    self.ReportedPlayers[ply:AccountID()] = true
 end
 
 function Player:HasReportedPlayer(ply)
-    return self.Reported and (self.Reported[ply:AccountID()] == true)
+    return self.ReportedPlayers and (self.ReportedPlayers[ply:AccountID()] == true)
 end
 
 function Player:RemainingReports()
-    return 2 - (self.Reported and #self.Reported or 0)
+    return 2 - (self.ReportedPlayers and table.Count(self.ReportedPlayers) or 0)
 end
 
 function Player:UpdateReports()
