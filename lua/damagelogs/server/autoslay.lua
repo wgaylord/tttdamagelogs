@@ -38,24 +38,26 @@ hook.Add("PlayerAuthed", "DamagelogNames", function(ply, steamid)
         end
     end
 
+    local safeSteamID = sql.SQLStr(steamid)
     local name = ply:Nick()
-    local query = Damagelog.SQLiteDatabase.QueryValue("SELECT name FROM damagelog_names WHERE steamid = '" .. steamid .. "' LIMIT 1")
+    local safeName = sql.SQLStr(name)
+    local query = Damagelog.SQLiteDatabase.QueryValue(string.format("SELECT name FROM damagelog_names WHERE steamid = %s", safeSteamID))
 
     if not query then
-        Damagelog.SQLiteDatabase.Query("INSERT INTO damagelog_names (`steamid`, `name`) VALUES('" .. steamid .. "', " .. sql.SQLStr(name) .. ");")
+        Damagelog.SQLiteDatabase.Query(string.format("INSERT INTO damagelog_names (`steamid`, `name`) VALUES(%s, %s)", safeSteamID, safeName))
     elseif query ~= name then
-        Damagelog.SQLiteDatabase.Query("UPDATE damagelog_names SET name = " .. sql.SQLStr(name) .. " WHERE steamid = '" .. steamid .. "' LIMIT 1;")
+        Damagelog.SQLiteDatabase.Query(string.format("UPDATE damagelog_names SET name = %s WHERE steamid = %s", safeName, safeSteamID))
     end
 
-    local c = Damagelog.SQLiteDatabase.QueryValue("SELECT slays FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1;")
-    if not tonumber(c) then
-        c = 0
+    local remainingAutoslays = Damagelog.SQLiteDatabase.QueryValue(string.format("SELECT slays FROM damagelog_autoslay WHERE ply = %s", safeSteamID))
+    if not tonumber(remainingAutoslays) then
+        remainingAutoslays = 0
     end
 
-    ply.AutoslaysLeft = c
+    ply.AutoslaysLeft = remainingAutoslays
     net.Start("DL_AutoslaysLeft")
     net.WriteEntity(ply)
-    net.WriteUInt(c, 32)
+    net.WriteUInt(remainingAutoslays, 32)
     net.Broadcast()
 end)
 
@@ -66,7 +68,7 @@ function Damagelog:GetName(steamid)
         end
     end
 
-    local query = Damagelog.SQLiteDatabase.QueryValue("SELECT name FROM damagelog_names WHERE steamid = '" .. steamid .. "' LIMIT 1;")
+    local query = Damagelog.SQLiteDatabase.QueryValue(string.format("SELECT name FROM damagelog_names WHERE steamid = %s", sql.SQLStr(steamid)))
 
     return query or "<Error>"
 end
@@ -174,7 +176,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
         NetworkSlays(steamid, 0)
     else
-        local data = Damagelog.SQLiteDatabase.QuerySingle("SELECT * FROM damagelog_autoslay WHERE ply = '" .. steamid .. "' LIMIT 1")
+        local data = Damagelog.SQLiteDatabase.QuerySingle(string.format("SELECT * FROM damagelog_autoslay WHERE ply = %s", sql.SQLStr(steamid)))
 
         if data then
             local adminid
@@ -217,7 +219,15 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 end
             else
                 local difference = slays - old_slays
-                Damagelog.SQLiteDatabase.Query(string.format("UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = '%s' LIMIT 1;", sql.SQLStr(new_admins), slays, sql.SQLStr(reason), tostring(os.time()), steamid))
+                Damagelog.SQLiteDatabase.Query(string.format(
+                    "UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = %s",
+                    sql.SQLStr(new_admins),
+                    slays,
+                    sql.SQLStr(reason),
+                    tostring(os.time()),
+                    sql.SQLStr(steamid)
+                ))
+
                 local list = self:CreateSlayList(old_steamids)
                 local nick = self:GetName(steamid)
                 local msg
@@ -329,7 +339,7 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                 v:SetNWBool("PlayedSRound", true)
             end)
 
-            local data = Damagelog.SQLiteDatabase.QuerySingle("SELECT * FROM damagelog_autoslay WHERE ply = '" .. v:SteamID() .. "' LIMIT 1")
+            local data = Damagelog.SQLiteDatabase.QuerySingle(string.format("SELECT * FROM damagelog_autoslay WHERE ply = %s", sql.SQLStr(v:SteamID())))
 
             if data then
                 if aslay then
