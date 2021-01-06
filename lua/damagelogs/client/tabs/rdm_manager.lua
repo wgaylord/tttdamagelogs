@@ -320,7 +320,7 @@ local function TakeAction()
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "ReportedPlayer") .. " (" .. report.attacker_nick .. ")", function()
             if IsValid(attacker) then
                 if ulx then
-                    RunConsoleCommand("ulx", mode == 1 and "aslay" or "ajail", attacker:Nick(), "0")
+                    RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 else
                     serverguard.command.Run("raslay", false, attacker:Nick())
                 end
@@ -336,7 +336,7 @@ local function TakeAction()
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "TheVictim") .. " (" .. report.victim_nick .. ")", function()
             if IsValid(victim) then
                 if ulx then
-                    RunConsoleCommand("ulx", mode == 1 and "aslay" or "ajail", victim:Nick(), "0")
+                    RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 else
                     serverguard.command.Run("raslay", false, victim:Nick())
                 end
@@ -1058,7 +1058,7 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
     self.Button.DoClick = function(panel)
         if IsValid(ply) then
             if ulx then
-                RunConsoleCommand("ulx", mode == 1 and "aslay" or "ajail", ply:Nick(), tostring(self.NumSlays), self.CurrentReason)
+                RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
             else
                 serverguard.command.Run("aslay", false, ply:Nick(), self.NumSlays, self.CurrentReason)
             end
