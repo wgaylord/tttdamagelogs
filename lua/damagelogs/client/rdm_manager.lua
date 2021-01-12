@@ -425,17 +425,26 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
         local characters = #Entry:GetText():gsub("[^%g\128-\191\208-\210]+", ""):gsub("%s+", " ")
         local disable = characters < 10 or not cur_selected
 
-        if disable and select(2, Type:GetSelected()) ~= DAMAGELOG_REPORT_CHAT then
-            Submit:SetEnabled(false)
-            Submit:SetText(TTTLogTranslate(GetDMGLogLang, "NotEnoughCharacters"))
-        else
-            Submit:SetEnabled(true)
-
-            if found then
-                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "Submit"))
-            elseif not found then
-                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "SubmitEvenWithNoStaff"))
+        if (select(2, Type:GetSelected()) ~= DAMAGELOG_REPORT_CHAT) then
+            if (characters < 10 or not cur_selected) then
+                Submit:SetEnabled(false)
+                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "NotEnoughCharacters"))
+                return
             end
+
+            if (characters > 1000) then
+                Submit:SetEnabled(false)
+                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "TooManyCharacters"))
+                return
+            end
+        end
+
+        Submit:SetEnabled(true)
+
+        if found then
+            Submit:SetText(TTTLogTranslate(GetDMGLogLang, "Submit"))
+        elseif not found then
+            Submit:SetText(TTTLogTranslate(GetDMGLogLang, "SubmitEvenWithNoStaff"))
         end
     end
 
@@ -444,24 +453,31 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
             return
         end
 
-        local ply = cur_selected.ply
+        local targetPlayer = cur_selected.ply
 
-        if not IsValid(ply) then
+        if not IsValid(targetPlayer) then
             return
         end
 
-        net.Start("DL_ReportPlayer")
-        net.WriteEntity(ply)
-        net.WriteString(Entry:GetText())
-
-        if not isAdmin then
-            net.WriteUInt(DAMAGELOG_REPORT_STANDARD, 3)
-        else
-            local reportType = select(2, Type:GetSelected())
-            net.WriteUInt(reportType, 3)
+        local reportType = DAMAGELOG_REPORT_STANDARD
+        if isAdmin then
+            reportType = select(2, Type:GetSelected())
         end
 
+        local message = string.sub(Entry:GetText(), 0, 1000)
+
+        local data = {
+            target = targetPlayer,
+            reportType = reportType,
+            message = message
+        }
+
+        local payload = util.Compress(util.TableToJSON(data))
+        net.Start("DL_ReportPlayer")
+            net.WriteUInt(string.len(payload), 32)
+            net.WriteData(payload, string.len(payload))
         net.SendToServer()
+
         Frame:Close()
         Frame:Remove()
     end

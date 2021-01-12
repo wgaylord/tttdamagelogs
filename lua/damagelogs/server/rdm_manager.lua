@@ -516,10 +516,15 @@ function HandlePlayerReport(ply, attacker, message, reportType)
     UpdatePreviousReports()
 end
 net.Receive("DL_ReportPlayer", function(len, ply)
-    local attacker = net.ReadEntity()
-    local message = net.ReadString()
-    local reportType = net.ReadUInt(3)
-    HandlePlayerReport(ply, attacker, message, reportType)
+    local length = net.ReadUInt(32)
+    local requestPayload = net.ReadData(length)
+    local request = util.JSONToTable(util.Decompress(requestPayload))
+
+    local target = request.target
+    local message = string.sub(request.message, 0, 1000)
+    local reportType = request.reportType
+
+    HandlePlayerReport(ply, target, message, reportType)
 end)
 
 
