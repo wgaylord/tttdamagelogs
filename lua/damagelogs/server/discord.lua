@@ -17,7 +17,7 @@ local function SendDiscordMessage(embed)
 
     if limit == 0 and now < reset then
         local function tcb()
-            SendDiscordMessage(data)
+            SendDiscordMessage(embed)
         end
 
         timer.Simple(reset - now, tcb)
