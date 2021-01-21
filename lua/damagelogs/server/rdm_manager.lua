@@ -692,15 +692,26 @@ end)
 
 hook_Add("PlayerAuthed", "RDM_Manager", function(ply)
     ply:ResetSubmittedReports()
-    ply:UpdateReports()
+end)
 
-    for _, tbl in pairs(Damagelog.Reports) do
-        for _, v in pairs(tbl) do
-            if v.attacker == ply:SteamID() and not v.response and not v.chat_opened then
-                ply:SendReport(v)
+hook_Add("PlayerInitialSpawn", "PlayerInitialSpawn_RDM_Manager", function(ply)
+    -- This attempts to fix a bug, where the previous map's reports aren't visible sometimes,
+    --    by sending previous reports a few seconds after the player has spawned
+    -- https://github.com/Tommy228/tttdamagelogs/issues/381
+    -- https://github.com/BadgerCode/tttdamagelogs/issues/32
+    timer.Simple(5, function()
+        if not IsValid(ply) then return end
+
+        ply:UpdateReports()
+
+        for _, tbl in pairs(Damagelog.Reports) do
+            for _, v in pairs(tbl) do
+                if v.attacker == ply:SteamID() and not v.response and not v.chat_opened then
+                    ply:SendReport(v)
+                end
             end
         end
-    end
+    end)
 end)
 
 hook_Add("PlayerDeath", "RDM_Manager", function(ply)
