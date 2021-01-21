@@ -104,54 +104,62 @@ local function BuildReportFrame(report)
             local Button = vgui.Create("DButton")
             Button:SetText(TTTLogTranslate(GetDMGLogLang, "Send"))
 
+            local function ShowError(errorMessage)
+                Info:SetText(errorMessage)
+                Info:SetInfoColor("red")
+
+                if timer.Exists("TimerRespond") then
+                    timer.Remove("TimerRespond")
+                end
+
+                timer.Create("TimerRespond", 5, 1, function()
+                    if not IsValid(Info) then return end
+
+                    Info:SetText(report.victim_nick .. " " .. TTTLogTranslate(GetDMGLogLang, "ReportedYou") .. (current and (" " .. TTTLogTranslate(GetDMGLogLang, "AfterRound") .. " " .. (report.round or "?")) or " " .. TTTLogTranslate(GetDMGLogLang, "PreviousMap")))
+                    Info:SetInfoColor("blue")
+                end)
+            end
+
             Button.DoClick = function()
                 local text = string.Trim(TextEntry:GetValue())
                 local size = #text:gsub("[^%g\128-\191\208-\210]+", ""):gsub("%s+", " ")
 
                 if size < 10 then
-                    Info:SetText(TTTLogTranslate(GetDMGLogLang, "MinCharacters"))
-                    Info:SetInfoColor("red")
-
-                    if timer.Exists("TimerRespond") then
-                        timer.Remove("TimerRespond")
-                    end
-
-                    timer.Create("TimerRespond", 5, 1, function()
-                        if IsValid(Info) then
-                            Info:SetText(report.victim_nick .. " " .. TTTLogTranslate(GetDMGLogLang, "ReportedYou") .. (current and (" " .. TTTLogTranslate(GetDMGLogLang, "AfterRound") .. " " .. (report.round or "?")) or " " .. TTTLogTranslate(GetDMGLogLang, "PreviousMap")))
-                            Info:SetInfoColor("blue")
-                        end
-                    end)
-                else
-                    report.finished = true
-                    Button:SetEnabled(false)
-                    Info:SetText(TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"))
-                    Info:SetInfoColor("orange")
-
-
-                    net.Start("DL_SendAnswer")
-                        net.WriteUInt(current and 1 or 0, 1)
-                        net.WriteString(text)
-                        net.WriteUInt(report.index, 16)
-                    net.SendToServer()
-
-                    for _, v in pairs(Damagelog.ReportsQueue) do
-                        if not v.finished then
-                            for _, sheet in pairs(ColumnSheet.Items) do
-                                if sheet.Button ~= ColumnSheet:GetActiveButton() then
-                                    ColumnSheet:SetActiveButton(sheet.Button)
-                                    break
-                                end
-                            end
-
-                            return
-                        end
-                    end
-
-                    ReportFrame:Close()
-                    ReportFrame:Remove()
-                    Damagelog:Notify(DAMAGELOG_NOTIFY_INFO, TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"), 4, "")
+                    ShowError(TTTLogTranslate(GetDMGLogLang, "MinCharacters"))
+                    return
+                elseif size > 1000 then
+                    ShowError(TTTLogTranslate(GetDMGLogLang, "TooManyCharacters"))
+                    return
                 end
+
+                report.finished = true
+                Button:SetEnabled(false)
+                Info:SetText(TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"))
+                Info:SetInfoColor("orange")
+
+
+                net.Start("DL_SendAnswer")
+                    net.WriteUInt(current and 1 or 0, 1)
+                    net.WriteString(text)
+                    net.WriteUInt(report.index, 16)
+                net.SendToServer()
+
+                for _, v in pairs(Damagelog.ReportsQueue) do
+                    if not v.finished then
+                        for _, sheet in pairs(ColumnSheet.Items) do
+                            if sheet.Button ~= ColumnSheet:GetActiveButton() then
+                                ColumnSheet:SetActiveButton(sheet.Button)
+                                break
+                            end
+                        end
+
+                        return
+                    end
+                end
+
+                ReportFrame:Close()
+                ReportFrame:Remove()
+                Damagelog:Notify(DAMAGELOG_NOTIFY_INFO, TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"), 4, "")
             end
 
             PanelList:AddItem(Button)
