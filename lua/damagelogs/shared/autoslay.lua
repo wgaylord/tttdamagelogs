@@ -66,6 +66,7 @@ local function CreateCommand()
         end
     end
 
+
     local autoslay = ulx.command("TTT", aslay and "ulx aslay" or "ulx ajail", ulx.autoslay, aslay and "!aslay" or "!ajail")
 
     autoslay:addParam({
@@ -97,6 +98,8 @@ ULib.cmds.optional, ULib.cmds.takeRestOfLine
     end
 
     autoslay:help(help)
+
+
     local autoslayid = ulx.command("TTT", aslay and "ulx aslayid" or "ulx ajailid", ulx.autoslayid, aslay and "!aslayid" or "!ajailid")
 
     autoslayid:addParam({
@@ -128,11 +131,16 @@ ULib.cmds.optional, ULib.cmds.takeRestOfLine
     end
 
     autoslayid:help(help)
+
+
     local cslays = ulx.command("TTT", aslay and "ulx cslays" or "ulx cjails", ulx.cslays, aslay and "!cslays" or "!cjails")
 
     cslays:addParam({
         type = ULib.cmds.PlayerArg
     })
+
+    cslays:defaultAccess(ULib.ACCESS_ADMIN)
+
 
     local cslaysid = ulx.command("TTT", aslay and "ulx cslaysid" or "ulx cjailsid", ulx.cslaysid, aslay and "!cslaysid" or "!cjailsid")
 
@@ -140,6 +148,8 @@ ULib.cmds.optional, ULib.cmds.takeRestOfLine
         type = ULib.cmds.StringArg,
         hint = "steamid"
     })
+
+    cslaysid:defaultAccess(ULib.ACCESS_ADMIN)
 end
 
 hook.Add("Initialize", "AutoSlay", CreateCommand)
