@@ -520,7 +520,7 @@ net.Receive("DL_ReportPlayer", function(len, ply)
     local requestPayload = net.ReadData(length)
     local request = util.JSONToTable(util.Decompress(requestPayload))
 
-    local target = request.target
+    local target = Entity(request.targetEntIndex)
     local message = string.sub(request.message, 0, 1000)
     local reportType = request.reportType
 

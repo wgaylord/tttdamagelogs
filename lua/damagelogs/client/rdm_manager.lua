@@ -365,7 +365,7 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
         UserList:AddPlayer(killer, true)
     end
 
-    for _, v in ipairs(player.GetHumans()) do
+    for _, v in ipairs(player.GetAll()) do
         if not (v == killer or v == client) then
             UserList:AddPlayer(v, false)
         end
@@ -475,7 +475,7 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
         local message = string.sub(Entry:GetText(), 0, 1000)
 
         local data = {
-            target = targetPlayer,
+            targetEntIndex = targetPlayer:EntIndex(), -- 2021-01-22 SteamID64 and AccountID are returning nil/empty for bots
             reportType = reportType,
             message = message
         }
