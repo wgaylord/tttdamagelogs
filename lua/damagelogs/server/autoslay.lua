@@ -321,10 +321,9 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
                     ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, target, reason)
                 elseif sam then
-                    sam.player.send_message(nil, "{A} added {V} {V_1} to {T} ({V_2}).", {
+                    sam.player.send_message(nil, "{A} added {V} " .. aslay and "autoslays" or "autojails" .. " to {T} ({V_2}).", {
                         A = admin and admin:Nick() or "Console",
                         V = slays,
-                        V_1 = aslay and "autoslays" or "autojails",
                         T = target:Nick(),
                         V_2 = reason
                     })
@@ -339,10 +338,9 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
                     ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, steamid, reason)
                 elseif sam then
-                    sam.player.send_message(nil, "{A} added {V} {V_1} to {T} ({V_2}).", {
+                    sam.player.send_message(nil, "{A} added {V} " .. aslay and "autoslays" or "autojails" .. " to {T} ({V_2}).", {
                         A = admin and admin:Nick() or "Console",
                         V = slays,
-                        V_1 = aslay and "autoslays" or "autojails",
                         T = steamid,
                         V_2 = reason
                     })
