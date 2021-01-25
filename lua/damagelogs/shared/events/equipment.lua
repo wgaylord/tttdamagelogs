@@ -28,7 +28,7 @@ function event:TTTEquipmentUse(ply, equipment, info)
         [EVENT_DETAILS.UserName] = ply:Nick(),
         [EVENT_DETAILS.UserRole] = ply:GetRole(),
         [EVENT_DETAILS.UserSteamID] = ply:SteamID(),
-        [EVENT_DETAILS.EquipmentClass] = equipment:GetClass(),
+        [EVENT_DETAILS.EquipmentClass] = type(equipment) == "Weapon" and equipment:GetClass() or equipment,
         [EVENT_DETAILS.ExtraInfo] = info
     })
 end

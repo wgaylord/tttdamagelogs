@@ -3,11 +3,24 @@ Damagelog.SQLiteDatabase = {}
 function Damagelog.SQLiteDatabase.Query(queryString)
     local result = sql.Query(queryString)
     if(result == false) then
+        local errorLog = string.format(
+            "[%s] Error performing SQLite query:\n%s\n[SQL Error] %s\n\n",
+            util.DateStamp(),
+            queryString,
+            sql.LastError())
+
+        file.Append("tttdamagelogs-sql-errors.txt", errorLog)
+
         local queryShort = queryString
-        if(string.len(queryShort) > 20) then 
-            queryShort = string.sub(queryString, 1, 20) .. "..."
-        end
-        assert(false, string.format("%s:\n[SQL Error] %s", "Error performing query " .. queryShort, sql.LastError()))
+        if(string.len(queryShort) > 20) then queryShort = string.sub(queryString, 1, 20) .. "..." end
+
+        local errorMessage = string.format(
+            "Error performing SQLite query\nCheck garrysmod/data/tttdamagelogs-sql-errors.txt (%s)\n%s - %s",
+            util.DateStamp(),
+            queryShort,
+            sql.LastError())
+
+        assert(false, errorMessage)
     end
 
     return result

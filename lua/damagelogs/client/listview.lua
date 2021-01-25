@@ -201,12 +201,23 @@ function Damagelog:SetRolesListView(listview, tbl)
     end
 end
 
-local role_colors = {
-    [1] = Color(0, 200, 0),
-    [2] = Color(200, 0, 0),
-    [3] = Color(0, 0, 200),
-    ["disconnected"] = Color(0, 0, 0)
-}
+local role_colors = { }
+
+-- We need to wait for the TTT gamemode to init to ensure the ROLE_XXX values are defined
+hook.Remove("Initialize", "damagelogs_gminit_rolecolours")
+hook.Add("Initialize", "damagelogs_gminit_rolecolours", function()
+    -- Defined in terrortown/gamemode/shared.lua
+    -- ROLE_INNOCENT  = 0
+    -- ROLE_TRAITOR   = 1
+    -- ROLE_DETECTIVE = 2
+
+    role_colors = {
+        [ROLE_INNOCENT] = Color(0, 200, 0),
+        [ROLE_TRAITOR] = Color(200, 0, 0),
+        [ROLE_DETECTIVE] = Color(0, 0, 200),
+        ["disconnected"] = Color(0, 0, 0)
+    }
+end)
 
 function Damagelog:AddRoleLine(listview, nick, role)
     if role ~= -3 then

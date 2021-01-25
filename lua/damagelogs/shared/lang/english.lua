@@ -104,6 +104,7 @@ DamagelogLang.english = {
     Submit = "Submit",
     SubmitEvenWithNoStaff = "Submit, even if there's no staff online",
     NotEnoughCharacters = "Not enough characters to submit",
+    TooManyCharacters = "Your message is too long",
     LogsBeforeDeath = "Logs before your death",
     MessageFrom = "message from",
     AboutYourReport = "about your report.",

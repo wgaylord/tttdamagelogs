@@ -104,54 +104,62 @@ local function BuildReportFrame(report)
             local Button = vgui.Create("DButton")
             Button:SetText(TTTLogTranslate(GetDMGLogLang, "Send"))
 
+            local function ShowError(errorMessage)
+                Info:SetText(errorMessage)
+                Info:SetInfoColor("red")
+
+                if timer.Exists("TimerRespond") then
+                    timer.Remove("TimerRespond")
+                end
+
+                timer.Create("TimerRespond", 5, 1, function()
+                    if not IsValid(Info) then return end
+
+                    Info:SetText(report.victim_nick .. " " .. TTTLogTranslate(GetDMGLogLang, "ReportedYou") .. (current and (" " .. TTTLogTranslate(GetDMGLogLang, "AfterRound") .. " " .. (report.round or "?")) or " " .. TTTLogTranslate(GetDMGLogLang, "PreviousMap")))
+                    Info:SetInfoColor("blue")
+                end)
+            end
+
             Button.DoClick = function()
                 local text = string.Trim(TextEntry:GetValue())
                 local size = #text:gsub("[^%g\128-\191\208-\210]+", ""):gsub("%s+", " ")
 
                 if size < 10 then
-                    Info:SetText(TTTLogTranslate(GetDMGLogLang, "MinCharacters"))
-                    Info:SetInfoColor("red")
-
-                    if timer.Exists("TimerRespond") then
-                        timer.Remove("TimerRespond")
-                    end
-
-                    timer.Create("TimerRespond", 5, 1, function()
-                        if IsValid(Info) then
-                            Info:SetText(report.victim_nick .. " " .. TTTLogTranslate(GetDMGLogLang, "ReportedYou") .. (current and (" " .. TTTLogTranslate(GetDMGLogLang, "AfterRound") .. " " .. (report.round or "?")) or " " .. TTTLogTranslate(GetDMGLogLang, "PreviousMap")))
-                            Info:SetInfoColor("blue")
-                        end
-                    end)
-                else
-                    report.finished = true
-                    Button:SetEnabled(false)
-                    Info:SetText(TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"))
-                    Info:SetInfoColor("orange")
-
-
-                    net.Start("DL_SendAnswer")
-                        net.WriteUInt(current and 1 or 0, 1)
-                        net.WriteString(text)
-                        net.WriteUInt(report.index, 16)
-                    net.SendToServer()
-
-                    for _, v in pairs(Damagelog.ReportsQueue) do
-                        if not v.finished then
-                            for _, sheet in pairs(ColumnSheet.Items) do
-                                if sheet.Button ~= ColumnSheet:GetActiveButton() then
-                                    ColumnSheet:SetActiveButton(sheet.Button)
-                                    break
-                                end
-                            end
-
-                            return
-                        end
-                    end
-
-                    ReportFrame:Close()
-                    ReportFrame:Remove()
-                    Damagelog:Notify(DAMAGELOG_NOTIFY_INFO, TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"), 4, "")
+                    ShowError(TTTLogTranslate(GetDMGLogLang, "MinCharacters"))
+                    return
+                elseif size > 1000 then
+                    ShowError(TTTLogTranslate(GetDMGLogLang, "TooManyCharacters"))
+                    return
                 end
+
+                report.finished = true
+                Button:SetEnabled(false)
+                Info:SetText(TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"))
+                Info:SetInfoColor("orange")
+
+
+                net.Start("DL_SendAnswer")
+                    net.WriteUInt(current and 1 or 0, 1)
+                    net.WriteString(text)
+                    net.WriteUInt(report.index, 16)
+                net.SendToServer()
+
+                for _, v in pairs(Damagelog.ReportsQueue) do
+                    if not v.finished then
+                        for _, sheet in pairs(ColumnSheet.Items) do
+                            if sheet.Button ~= ColumnSheet:GetActiveButton() then
+                                ColumnSheet:SetActiveButton(sheet.Button)
+                                break
+                            end
+                        end
+
+                        return
+                    end
+                end
+
+                ReportFrame:Close()
+                ReportFrame:Remove()
+                Damagelog:Notify(DAMAGELOG_NOTIFY_INFO, TTTLogTranslate(GetDMGLogLang, "ResponseSubmitted"), 4, "")
             end
 
             PanelList:AddItem(Button)
@@ -357,7 +365,7 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
         UserList:AddPlayer(killer, true)
     end
 
-    for _, v in ipairs(player.GetHumans()) do
+    for _, v in ipairs(player.GetAll()) do
         if not (v == killer or v == client) then
             UserList:AddPlayer(v, false)
         end
@@ -425,17 +433,26 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
         local characters = #Entry:GetText():gsub("[^%g\128-\191\208-\210]+", ""):gsub("%s+", " ")
         local disable = characters < 10 or not cur_selected
 
-        if disable and select(2, Type:GetSelected()) ~= DAMAGELOG_REPORT_CHAT then
-            Submit:SetEnabled(false)
-            Submit:SetText(TTTLogTranslate(GetDMGLogLang, "NotEnoughCharacters"))
-        else
-            Submit:SetEnabled(true)
-
-            if found then
-                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "Submit"))
-            elseif not found then
-                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "SubmitEvenWithNoStaff"))
+        if (select(2, Type:GetSelected()) ~= DAMAGELOG_REPORT_CHAT) then
+            if (characters < 10 or not cur_selected) then
+                Submit:SetEnabled(false)
+                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "NotEnoughCharacters"))
+                return
             end
+
+            if (characters > 1000) then
+                Submit:SetEnabled(false)
+                Submit:SetText(TTTLogTranslate(GetDMGLogLang, "TooManyCharacters"))
+                return
+            end
+        end
+
+        Submit:SetEnabled(true)
+
+        if found then
+            Submit:SetText(TTTLogTranslate(GetDMGLogLang, "Submit"))
+        elseif not found then
+            Submit:SetText(TTTLogTranslate(GetDMGLogLang, "SubmitEvenWithNoStaff"))
         end
     end
 
@@ -444,24 +461,31 @@ function Damagelog:ReportWindow(found, deathLogs, previousReports, currentReport
             return
         end
 
-        local ply = cur_selected.ply
+        local targetPlayer = cur_selected.ply
 
-        if not IsValid(ply) then
+        if not IsValid(targetPlayer) then
             return
         end
 
-        net.Start("DL_ReportPlayer")
-        net.WriteEntity(ply)
-        net.WriteString(Entry:GetText())
-
-        if not isAdmin then
-            net.WriteUInt(DAMAGELOG_REPORT_STANDARD, 3)
-        else
-            local reportType = select(2, Type:GetSelected())
-            net.WriteUInt(reportType, 3)
+        local reportType = DAMAGELOG_REPORT_STANDARD
+        if isAdmin then
+            reportType = select(2, Type:GetSelected())
         end
 
+        local message = string.sub(Entry:GetText(), 0, 1000)
+
+        local data = {
+            targetEntIndex = targetPlayer:EntIndex(), -- 2021-01-22 SteamID64 and AccountID are returning nil/empty for bots
+            reportType = reportType,
+            message = message
+        }
+
+        local payload = util.Compress(util.TableToJSON(data))
+        net.Start("DL_ReportPlayer")
+            net.WriteUInt(string.len(payload), 32)
+            net.WriteData(payload, string.len(payload))
         net.SendToServer()
+
         Frame:Close()
         Frame:Remove()
     end

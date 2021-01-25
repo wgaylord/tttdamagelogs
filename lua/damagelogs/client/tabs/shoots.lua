@@ -55,9 +55,13 @@ function Damagelog:DrawShootsTab()
 end
 
 net.Receive("DL_SendShootLogs", function()
-    local roles = net.ReadTable()
-    local data = net.ReadTable()
-
+    local rolelen = net.ReadUInt(15)
+    local roles = util.JSONToTable(util.Decompress(net.ReadData(rolelen)))
+    local datalen = net.ReadUInt(15)
+    local data = util.JSONToTable(util.Decompress(net.ReadData(datalen)))
+    if not istable(data) then
+        return
+    end
     if IsValid(Damagelog.ShootsList) then
         Damagelog.ShootsList:Clear()
         Damagelog:SetDamageInfosLV(Damagelog.ShootsList, roles, nil, nil, nil, nil, data)

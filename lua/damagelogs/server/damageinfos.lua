@@ -147,9 +147,12 @@ net.Receive("DL_AskShootLogs", function(_, ply)
     if not roles or not data then
         return
     end
-
+    roles = util.Compress(util.TableToJSON(roles))
+    data = util.Compress(util.TableToJSON(data))
     net.Start("DL_SendShootLogs")
-    net.WriteTable(roles)
-    net.WriteTable(data)
+    net.WriteUInt(#roles, 15)
+    net.WriteData(roles, #roles)
+    net.WriteUInt(#data, 15)
+    net.WriteData(data, #data)
     net.Send(ply)
 end)
