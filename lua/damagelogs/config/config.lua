@@ -13,15 +13,13 @@
 	Third argument: access to RDM Manager tab in Damagelogs (true/false).
 ]]
 --
-Damagelog:AddUser("boardofdirectors", 4, true)
-Damagelog:AddUser("divisionleader", 4, true)
+Damagelog:AddUser("owner", 4, true)
+Damagelog:AddUser("founder", 4, true)
 Damagelog:AddUser("superadmin", 4, true)
-Damagelog:AddUser("council", 3, true)
-Damagelog:AddUser("senioradmin", 3, true)
-Damagelog:AddUser("admin", 3, true)
-Damagelog:AddUser("trialadmin", 3, true)
-Damagelog:AddUser("trialadminplus", 3, true)
-Damagelog:AddUser("adminplus", 3, true)
+Damagelog:AddUser("admin", 4, true)
+Damagelog:AddUser("operator", 3, false)
+Damagelog:AddUser("user", 2, false)
+
 -- The F-key
 Damagelog.Key = KEY_F8
 --[[Is a message shown when an alive player opens the menu?
@@ -85,7 +83,7 @@ Damagelog.Ban_DefaultReason12 = "Yolo"
 -- The number of days the logs last on the database (to avoid lags when opening the menu)
 Damagelog.LogDays = 61
 -- Hide the Donate button on the top-right corner
-Damagelog.HideDonateButton = true
+Damagelog.HideDonateButton = false
 -- Use the Workshop to download content files
 Damagelog.UseWorkshop = true
 -- Force a language - When empty use user-defined language
@@ -113,7 +111,7 @@ Damagelog.PrivateMessagePrefix = "[RDM Manager]"
 -- 0 - disabled
 -- 1 - create messages for new reports when there are no admins online
 -- 2 - create messages for every report
-Damagelog.DiscordWebhookMode = 2
+Damagelog.DiscordWebhookMode = 0
 
 
 -- Don't forget to set the value of "ttt_dmglogs_discordurl" convar to your webhook URL in server.cfg
