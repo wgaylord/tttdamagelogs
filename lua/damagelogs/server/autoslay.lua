@@ -246,7 +246,16 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 end
             else
                 local difference = slays - old_slays
-                Damagelog.SQLiteDatabase.Query(string.format("UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = %s", sql.SQLStr(new_admins), slays, sql.SQLStr(reason), tostring(os.time()), sql.SQLStr(steamid)))
+
+                Damagelog.SQLiteDatabase.Query(string.format(
+                    "UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = %s",
+                    sql.SQLStr(new_admins),
+                    slays,
+                    sql.SQLStr(reason),
+                    tostring(os.time()),
+                    sql.SQLStr(steamid)
+                ))
+
                 local list = self:CreateSlayList(old_steamids)
                 local nick = self:GetName(steamid)
                 local msg
