@@ -1058,7 +1058,7 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
             if ulx then
                 RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
             elseif sam then
-                RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
+                RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
             elseif serverguard then
                 serverguard.command.Run("aslay", false, ply:Nick(), self.NumSlays, self.CurrentReason)
             end
