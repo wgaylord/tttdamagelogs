@@ -160,7 +160,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
     end
 
     if slays == 0 then
-        Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. steamid .. "';")
+        Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. (target and target:SteamID() or steamid) .. "';")
         local name = self:GetName(steamid)
 
         if ulx then
@@ -321,7 +321,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
                     ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, target, reason)
                 elseif sam then
-                    sam.player.send_message(nil, "{A} added {V} " .. aslay and "autoslays" or "autojails" .. " to {T} ({V_2}).", {
+                    sam.player.send_message(nil, "{A} added {V} " .. (aslay and "autoslays" or "autojails") .. " to {T} ({V_2}).", {
                         A = admin and admin:Nick() or "Console",
                         V = slays,
                         T = target:Nick(),
@@ -338,7 +338,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
                     ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, steamid, reason)
                 elseif sam then
-                    sam.player.send_message(nil, "{A} added {V} " .. aslay and "autoslays" or "autojails" .. " to {T} ({V_2}).", {
+                    sam.player.send_message(nil, "{A} added {V} " .. (aslay and "autoslays" or "autojails") .. " to {T} ({V_2}).", {
                         A = admin and admin:Nick() or "Console",
                         V = slays,
                         T = steamid,

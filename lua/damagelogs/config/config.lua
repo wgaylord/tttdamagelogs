@@ -54,6 +54,7 @@ Damagelog.ULX_AutoslayMode = 1
 -- Do not enable this if another addon interferes with roles (Pointshop roles for example)
 Damagelog.ULX_Autoslay_ForceRole = true
 -- Default autoslay reasons (ULX, SAM, and ServerGuard)
+Damagelog.Autoslay_DefaultReason = "Breaking Rules"
 Damagelog.Autoslay_DefaultReason1 = "Random Damage"
 Damagelog.Autoslay_DefaultReason2 = "RDM"
 Damagelog.Autoslay_DefaultReason3 = "2x RDM"
@@ -64,8 +65,8 @@ Damagelog.Autoslay_DefaultReason7 = "Ghosting"
 Damagelog.Autoslay_DefaultReason8 = "Hacking"
 Damagelog.Autoslay_DefaultReason9 = "Prop kill"
 Damagelog.Autoslay_DefaultReason10 = "Consistent RDM"
-Damagelog.Autoslay_DefaultReason11 = "Yolo"
-Damagelog.Autoslay_DefaultReason12 = "Yolo"
+Damagelog.Autoslay_DefaultReason11 = "Trolling"
+Damagelog.Autoslay_DefaultReason12 = "Minge"
 
 -- Default ban reasons (ULX and ServerGuard)
 Damagelog.Ban_DefaultReason1 = "Random Damage and leave"
@@ -77,9 +78,9 @@ Damagelog.Ban_DefaultReason6 = "Super Mass"
 Damagelog.Ban_DefaultReason7 = "Ghosting"
 Damagelog.Ban_DefaultReason8 = "Hacking"
 Damagelog.Ban_DefaultReason9 = "Consistent RDM"
-Damagelog.Ban_DefaultReason10 = "Yolo"
-Damagelog.Ban_DefaultReason11 = "Yolo"
-Damagelog.Ban_DefaultReason12 = "Yolo"
+Damagelog.Ban_DefaultReason10 = "Attempted RDM"
+Damagelog.Ban_DefaultReason11 = "Random Damage"
+Damagelog.Ban_DefaultReason12 = "Trolling"
 -- The number of days the logs last on the database (to avoid lags when opening the menu)
 Damagelog.LogDays = 61
 -- Hide the Donate button on the top-right corner
@@ -89,7 +90,7 @@ Damagelog.UseWorkshop = true
 -- Force a language - When empty use user-defined language
 Damagelog.ForcedLanguage = ""
 -- Allow reports even with no staff online
-Damagelog.NoStaffReports = true
+Damagelog.NoStaffReports = false
 -- Allow more than 2 reports per round
 Damagelog.MoreReportsPerRound = false
 -- Allow reports before playing

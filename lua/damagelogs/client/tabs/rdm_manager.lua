@@ -326,9 +326,9 @@ local function TakeAction()
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "ReportedPlayer") .. " (" .. report.attacker_nick .. ")", function()
             if IsValid(attacker) then
                 if ulx then
-                    RunConsoleCommand("ulx", mode == 1 and "aslay" or "ajail", attacker:Nick(), "0")
+                    RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif sam then
-                    RunConsoleCommand("sam", mode == 1 and "aslay" or "ajail", attacker:Nick(), "0")
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif serverguard then
                         serverguard.command.Run("raslay", false, attacker:Nick())
                 end
@@ -346,9 +346,9 @@ local function TakeAction()
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "TheVictim") .. " (" .. report.victim_nick .. ")", function()
             if IsValid(victim) then
                 if ulx then
-                    RunConsoleCommand("ulx", mode == 1 and "aslay" or "ajail", victim:Nick(), "0")
+                    RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif sam then
-                    RunConsoleCommand("sam", mode == 1 and "aslay" or "ajail",  victim:Nick(), "0")
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif serverguard then
                     serverguard.command.Run("raslay", false, victim:Nick())
                 end

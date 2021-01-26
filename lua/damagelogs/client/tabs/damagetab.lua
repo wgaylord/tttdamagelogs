@@ -474,8 +474,9 @@ net.Receive("DL_SendDamageInfos", function()
     Damagelog:SetDamageInfosLV(Damagelog.DamageInfo, roles, att, victim, beg, t, result)
 end)
 
-net.Receive("DL_RefreshDamagelog", function(len)
+net.Receive("DL_RefreshDamagelog", function()
     local client = LocalPlayer()
+    local len = net.ReadUInt(32)
     local tbl = util.JSONToTable(util.Decompress(net.ReadData(len)))
 
     if not IsValid(client) then

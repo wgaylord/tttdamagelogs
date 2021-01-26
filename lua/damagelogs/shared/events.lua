@@ -39,6 +39,7 @@ function Damagelog:AddEvent(event, f)
 
         infos = util.Compress(util.TableToJSON(infos))
         net.Start("DL_RefreshDamagelog")
+        net.WriteUInt(#infos, 32)
         net.WriteData(infos, #infos)
         net.Send(recip)
     end
