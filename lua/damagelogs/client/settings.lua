@@ -4,7 +4,6 @@ CreateClientConVar("ttt_dmglogs_updatenotifications", "1", FCVAR_ARCHIVE)
 CreateClientConVar("ttt_dmglogs_showpending", "1", FCVAR_ARCHIVE)
 CreateClientConVar("ttt_dmglogs_enablesound", "1", FCVAR_ARCHIVE)
 CreateClientConVar("ttt_dmglogs_enablesoundoutside", "0", FCVAR_ARCHIVE)
-local color_lightgreen = Color(50, 255, 50)
 
 hook.Add("TTTSettingsTabs", "DamagelogsTTTSettingsTab", function(dtabs)
     local padding = dtabs:GetPadding() * 2

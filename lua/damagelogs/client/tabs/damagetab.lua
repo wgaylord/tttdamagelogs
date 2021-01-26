@@ -476,7 +476,8 @@ end)
 
 net.Receive("DL_RefreshDamagelog", function()
     local client = LocalPlayer()
-    local tbl = net.ReadTable()
+    local len = net.ReadUInt(32)
+    local tbl = util.JSONToTable(util.Decompress(net.ReadData(len)))
 
     if not IsValid(client) then
         return

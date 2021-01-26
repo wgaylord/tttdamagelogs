@@ -85,11 +85,7 @@ local colors = {
 
 local function TakeAction()
     local report = Damagelog.SelectedReport
-
-    if not report then
-        return
-    end
-
+    if not report then return end
     local current = not report.previous
     local attacker = player.GetBySteamID(report.attacker)
     local victim = player.GetBySteamID(report.victim)
@@ -185,8 +181,8 @@ local function TakeAction()
         end
     end):SetImage("icon16/television.png")
 
-    if serverguard or ulx then
-        if serverguard or (ulx and (mode == 1 or mode == 2)) then
+    if serverguard or sam or ulx then
+        if serverguard or sam or (ulx and (mode == 1 or mode == 2)) then
             local function SetConclusion(ply, num, reason)
                 net.Start("DL_Conclusion")
                 net.WriteUInt(1, 1)
@@ -257,7 +253,9 @@ local function TakeAction()
             if IsValid(attacker) then
                 if ulx then
                     RunConsoleCommand("ulx", "slay", attacker:Nick())
-                else
+                elseif sam then
+                    RunConsoleCommand("sam", "slay", attacker:Nick())
+                elseif serverguard then
                     serverguard.command.Run("slay", false, ply:Nick())
                 end
             else
@@ -278,7 +276,9 @@ local function TakeAction()
                 Derma_StringRequest(TTTLogTranslate(GetDMGLogLang, "PrivateMessage"), string.format(TTTLogTranslate(GetDMGLogLang, "WhatToSay"), attacker:Nick()), "", function(msg)
                     if ulx then
                         RunConsoleCommand("ulx", "psay", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
-                    else
+                    elseif sam then
+                        RunConsoleCommand("sam", "pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+                    elseif serverguard then
                         serverguard.command.Run("pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     end
                 end)
@@ -292,8 +292,10 @@ local function TakeAction()
                 Derma_StringRequest(TTTLogTranslate(GetDMGLogLang, "PrivateMessage"), string.format(TTTLogTranslate(GetDMGLogLang, "WhatToSay"), victim:Nick()), "", function(msg)
                     if ulx then
                         RunConsoleCommand("ulx", "psay", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
-                    else
-                        serverguard.command.Run("pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+                    elseif sam then
+                        RunConsoleCommand("sam", "pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+                    elseif serverguard then
+                        serverguard.command.Run("pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     end
                 end)
             else
@@ -309,7 +311,7 @@ local function TakeAction()
 
         if ulx and mode == 2 then
             txt = TTTLogTranslate(GetDMGLogLang, "RemoveAutoJails")
-        elseif serverguard then
+        elseif sam or serverguard then
             txt = TTTLogTranslate(GetDMGLogLang, "RemoveOneAutoSlay")
         end
 
@@ -321,12 +323,16 @@ local function TakeAction()
             if IsValid(attacker) then
                 if ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
-                else
+                elseif sam then
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                elseif serverguard then
                     serverguard.command.Run("raslay", false, attacker:Nick())
                 end
             else
                 if ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                elseif sam then
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 else
                     Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
                 end
@@ -337,12 +343,16 @@ local function TakeAction()
             if IsValid(victim) then
                 if ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
-                else
+                elseif sam then
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                elseif serverguard then
                     serverguard.command.Run("raslay", false, victim:Nick())
                 end
             else
                 if ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
+                elseif sam then
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 else
                     Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
                 end
@@ -400,11 +410,7 @@ end
 
 function PANEL:UpdateReport(index)
     local report = self.ReportsTable[index]
-
-    if not report then
-        return
-    end
-
+    if not report then return end
     local str
 
     if report.chat_open then
@@ -422,7 +428,9 @@ function PANEL:UpdateReport(index)
             self.Reports[index] = self:AddLine(unpack(tbl))
             self.Reports[index].status = report.status
             self.Reports[index].index = report.index
+
             local tbl = {self.Reports[index]}
+
             self.Reports[index].CanceledIcon = vgui.Create("DImage", self.Reports[index])
             self.Reports[index].CanceledIcon:SetSize(16, 16)
             self.Reports[index].CanceledIcon:SetImage(report.canceled and "icon16/tick.png" or "icon16/cross.png")
@@ -518,10 +526,7 @@ end
 function PANEL:UpdateAllReports()
     self:Clear()
     table.Empty(self.Reports)
-
-    if not self.ReportsTable then
-        return
-    end
+    if not self.ReportsTable then return end
 
     for i = 1, #self.ReportsTable do
         self:AddReport(i)
@@ -643,17 +648,9 @@ net.Receive("DL_UpdateReports", function()
     Damagelog.SelectedReport = nil
     local size = net.ReadUInt(32)
     local data = net.ReadData(size)
-
-    if not data then
-        return
-    end
-
+    if not data then return end
     local json = util.Decompress(data)
-
-    if not json then
-        return
-    end
-
+    if not json then return end
     Damagelog.Reports = util.JSONToTable(json)
 
     if IsValid(Damagelog.CurrentReports) then
@@ -813,10 +810,7 @@ function Damagelog:DrawRDMManager(x, y)
         local cm = 5
 
         Conclusion.PaintOver = function(panel, w, h)
-            if not panel.t1 then
-                return
-            end
-
+            if not panel.t1 then return end
             surface.SetDrawColor(color_black)
             surface.DrawLine(0, 0, w - 1, 0)
             surface.DrawLine(w - 1, 0, w - 1, h - 1)
@@ -990,9 +984,13 @@ function PANEL:Init()
     end
 
     self.Reasons = {}
+
     local reasons1 = {Damagelog.Autoslay_DefaultReason1, Damagelog.Autoslay_DefaultReason2, Damagelog.Autoslay_DefaultReason3, Damagelog.Autoslay_DefaultReason4, Damagelog.Autoslay_DefaultReason5, Damagelog.Autoslay_DefaultReason6}
+
     self:AddReasonRow(self.Distance / 2 + self.Dimension / 2, self.Distance * 1.5, self.Dimension, self.Dimension / 2, reasons1)
+
     local reasons2 = {Damagelog.Autoslay_DefaultReason7, Damagelog.Autoslay_DefaultReason8, Damagelog.Autoslay_DefaultReason9, Damagelog.Autoslay_DefaultReason10, Damagelog.Autoslay_DefaultReason11, Damagelog.Autoslay_DefaultReason12}
+
     self:AddReasonRow(self.Distance + self.Dimension * 1.25, self.Distance * 1.5, self.Dimension, self.Dimension / 2, reasons2)
     local DLabel = vgui.Create("DLabel", self)
     DLabel:SetPos(self.Distance / 2, self.Dimension / 2.5 + 5)
@@ -1059,7 +1057,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
         if IsValid(ply) then
             if ulx then
                 RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
-            else
+            elseif sam then
+                RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
+            elseif serverguard then
                 serverguard.command.Run("aslay", false, ply:Nick(), self.NumSlays, self.CurrentReason)
             end
 
@@ -1067,6 +1067,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
         else
             if ulx then
                 RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", (reported and report.attacker) or (not reported and report.victim), tostring(self.NumSlays), self.CurrentReason)
+                self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.NumSlays, self.CurrentReason)
+            elseif sam then
+                RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", (reported and report.attacker) or (not reported and report.victim), tostring(self.NumSlays), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.NumSlays, self.CurrentReason)
             else
                 Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
@@ -1211,9 +1214,13 @@ function PANEL:Init()
 
     self.BanPanel:AddItem(self.Days)
     self.Reasons = {}
+
     local reasons1 = {Damagelog.Ban_DefaultReason1, Damagelog.Ban_DefaultReason2, Damagelog.Ban_DefaultReason3, Damagelog.Ban_DefaultReason4, Damagelog.Ban_DefaultReason5, Damagelog.Ban_DefaultReason6}
+
     self:AddReasonRow(self.Distance / 2 + self.Dimension / 2, self.Distance * 1.5, self.Dimension, self.Dimension / 2, reasons1)
+
     local reasons2 = {Damagelog.Ban_DefaultReason7, Damagelog.Ban_DefaultReason8, Damagelog.Ban_DefaultReason9, Damagelog.Ban_DefaultReason10, Damagelog.Ban_DefaultReason11, Damagelog.Ban_DefaultReason12}
+
     self:AddReasonRow(self.Distance + self.Dimension * 1.25, self.Distance * 1.5, self.Dimension, self.Dimension / 2, reasons2)
     local DLabel = vgui.Create("DLabel", self)
     DLabel:SetPos(self.Distance / 2, self.Dimension / 2.5 + 35)
@@ -1288,7 +1295,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
         if IsValid(ply) then
             if ulx then
                 RunConsoleCommand("ulx", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
-            else
+            elseif sam then
+                RunConsoleCommand("sam", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
+            elseif serverguard then
                 serverguard.command.Run("ban", false, ply:Nick(), self.BanTimeNumber, self.CurrentReason)
             end
 
@@ -1296,6 +1305,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
         else
             if ulx then
                 RunConsoleCommand("ulx", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(self.BanTimeNumber), self.CurrentReason)
+                self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
+            elseif sam then
+                RunConsoleCommand("sam", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(self.BanTimeNumber), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
             else
                 Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")

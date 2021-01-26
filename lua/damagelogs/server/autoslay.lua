@@ -4,11 +4,7 @@ util.AddNetworkString("DL_AutoslaysLeft")
 util.AddNetworkString("DL_PlayerLeft")
 util.AddNetworkString("DL_SendJails")
 local mode = Damagelog.ULX_AutoslayMode
-
-if mode ~= 1 and mode ~= 2 then
-    return
-end
-
+if mode ~= 1 and mode ~= 2 then return end
 local aslay = mode == 1
 
 if not sql.TableExists("damagelog_autoslay") then
@@ -50,6 +46,7 @@ hook.Add("PlayerAuthed", "DamagelogNames", function(ply, steamid)
     end
 
     local remainingAutoslays = Damagelog.SQLiteDatabase.QueryValue(string.format("SELECT slays FROM damagelog_autoslay WHERE ply = %s", safeSteamID))
+
     if not tonumber(remainingAutoslays) then
         remainingAutoslays = 0
     end
@@ -63,9 +60,7 @@ end)
 
 function Damagelog:GetName(steamid)
     for _, v in ipairs(player.GetHumans()) do
-        if v:SteamID() == steamid then
-            return v:Nick()
-        end
+        if v:SteamID() == steamid then return v:Nick() end
     end
 
     local query = Damagelog.SQLiteDatabase.QueryValue(string.format("SELECT name FROM damagelog_names WHERE steamid = %s", sql.SQLStr(steamid)))
@@ -165,13 +160,27 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
     end
 
     if slays == 0 then
-        Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. steamid .. "';")
+        Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. (target and target:SteamID() or steamid) .. "';")
         local name = self:GetName(steamid)
 
-        if target then
-            ulx.fancyLogAdmin(admin, aslay and "#A removed the autoslays of #T." or "#A removed the autojails of #T.", target)
-        else
-            ulx.fancyLogAdmin(admin, aslay and "#A removed the autoslays of #s." or "#A removed the jails of #s.", steamid)
+        if ulx then
+            if target then
+                ulx.fancyLogAdmin(admin, aslay and "#A removed the autoslays of #T." or "#A removed the autojails of #T.", target)
+            else
+                ulx.fancyLogAdmin(admin, aslay and "#A removed the autoslays of #s." or "#A removed the jails of #s.", steamid)
+            end
+        elseif sam then
+            if target then
+                sam.player.send_message(nil, "{A} removed the slays of {T}.", {
+                    A = admin:Nick(),
+                    T = target:Nick()
+                })
+            else
+                sam.player.send_message(nil, "{A} removed the slays of {T}.", {
+                    A = admin:Nick(),
+                    T = steamid
+                })
+            end
         end
 
         NetworkSlays(steamid, 0)
@@ -201,24 +210,43 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 local msg
 
                 if target then
-                    if aslay then
-                        msg = "#T was already autoslain "
-                    else
-                        msg = "#T was already autojailed "
-                    end
+                    if ulx then
+                        if aslay then
+                            msg = "#T was already autoslain "
+                        else
+                            msg = "#T was already autojailed "
+                        end
 
-                    ulx.fancyLogAdmin(admin, msg .. slays .. " time(s) by #A for #s.", target, list, reason)
+                        ulx.fancyLogAdmin(admin, msg .. slays .. " time(s) by #A for #s.", target, list, reason)
+                    elseif sam then
+                        sam.player.send_message(admin, "{T} was already {V_1} {V} time(s) by {A} for {V_2}.", {
+                            T = target:Nick(),
+                            V_1 = string.format("%s", aslay and "autoslain" or "autojailed"),
+                            A = list,
+                            V_2 = reason
+                        })
+                    end
                 else
-                    if aslay then
-                        msg = "#s was already autoslain "
-                    else
-                        msg = "#s was already autojailed "
-                    end
+                    if ulx then
+                        if aslay then
+                            msg = "#s was already autoslain "
+                        else
+                            msg = "#s was already autojailed "
+                        end
 
-                    ulx.fancyLogAdmin(admin, msg .. slays .. " time(s) by #A for #s.", steamid, list, reason)
+                        ulx.fancyLogAdmin(admin, msg .. slays .. " time(s) by #A for #s.", steamid, list, reason)
+                    elseif sam then
+                        sam.player.send_message(admin, "{T} was already {V_1} {V} time(s) by {A} for {V_2}.", {
+                            T = steamid,
+                            V_1 = string.format("%s", aslay and "autoslain" or "autojailed"),
+                            A = list,
+                            V_2 = reason
+                        })
+                    end
                 end
             else
                 local difference = slays - old_slays
+
                 Damagelog.SQLiteDatabase.Query(string.format(
                     "UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = %s",
                     sql.SQLStr(new_admins),
@@ -233,21 +261,49 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 local msg
 
                 if target then
-                    if aslay then
-                        msg = " autoslays to #T (#s). He was previously autoslain "
-                    else
-                        msg = " autojails to #T (#s). He was previously autojailed "
-                    end
+                    if ulx then
+                        if aslay then
+                            msg = " autoslays to #T (#s). He was previously autoslain "
+                        else
+                            msg = " autojails to #T (#s). He was previously autojailed "
+                        end
 
-                    ulx.fancyLogAdmin(admin, "#A " .. (difference > 0 and "added " or "removed ") .. math.abs(difference) .. msg .. old_slays .. " time(s) by #s.", target, reason, list)
+                        ulx.fancyLogAdmin(admin, "#A " .. (difference > 0 and "added " or "removed ") .. math.abs(difference) .. msg .. old_slays .. " time(s) by #s.", target, reason, list)
+                    elseif sam then
+                        sam.player.send_message(nil, "{A} {V_1} {V} {V_2} {T} for {R}. They were previously {V_3} {V_4} time(s) by {V_5}.", {
+                            A = admin and admin:Nick() or "Console",
+                            V_1 = difference > 0 and "added " or "removed ",
+                            V = math.abs(difference),
+                            V_2 = aslay and " autoslays to " or " autojails to ",
+                            T = target,
+                            R = reason,
+                            V_3 = aslay and " autoslain " or " autojailed ",
+                            V_4 = old_slays,
+                            V_5 = list
+                        })
+                    end
                 else
-                    if aslay then
-                        msg = " autoslays to #s (#s). He was previously autoslain "
-                    else
-                        msg = " autojails to #s (#s). He was previously autojailed "
-                    end
+                    if ulx then
+                        if aslay then
+                            msg = " autoslays to #T (#s). He was previously autoslain "
+                        else
+                            msg = " autojails to #T (#s). He was previously autojailed "
+                        end
 
-                    ulx.fancyLogAdmin(admin, "#A " .. (difference > 0 and "added " or "removed ") .. math.abs(difference) .. msg .. old_slays .. " time(s) by #s.", steamid, reason, list)
+                        ulx.fancyLogAdmin(admin, "#A " .. (difference > 0 and "added " or "removed ") .. math.abs(difference) .. msg .. old_slays .. " time(s) by #s.", steamid, reason, list)
+                    elseif sam then
+                        sam.player.send_message(nil, "{A} {V_1} {V} {V_2} {T} for {R}. They were previously {V_3} {V_4} time(s) by {V_5}.", {
+                            A = admin and admin:Nick() or "Console",
+                            V_1 = difference > 0 and "added " or "removed ",
+                            V = math.abs(difference),
+                            V_2 = aslay and " autoslays to " or " autojails to ",
+                            T = steamid,
+                            R = reason,
+                            V_3 = aslay and " autoslain " or " autojailed ",
+                            V_4 = old_slays,
+                            V_5 = list
+                        })
+                    end
                 end
 
                 NetworkSlays(steamid, slays)
@@ -265,21 +321,39 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
             local msg
 
             if target then
-                if aslay then
-                    msg = " autoslays to #T (#s)"
-                else
-                    msg = " autojails to #T (#s)"
-                end
+                if ulx then
+                    if aslay then
+                        msg = " autoslays to #T (#s)"
+                    else
+                        msg = " autojails to #T (#s)"
+                    end
 
-                ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, target, reason)
+                    ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, target, reason)
+                elseif sam then
+                    sam.player.send_message(nil, "{A} added {V} " .. (aslay and "autoslays" or "autojails") .. " to {T} ({V_2}).", {
+                        A = admin and admin:Nick() or "Console",
+                        V = slays,
+                        T = target:Nick(),
+                        V_2 = reason
+                    })
+                end
             else
-                if aslay then
-                    msg = " autoslays to #s (#s)"
-                else
-                    msg = " autojails to #s (#s)"
-                end
+                if ulx then
+                    if aslay then
+                        msg = " autoslays to #s (#s)"
+                    else
+                        msg = " autojails to #s (#s)"
+                    end
 
-                ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, steamid, reason)
+                    ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, steamid, reason)
+                elseif sam then
+                    sam.player.send_message(nil, "{A} added {V} " .. (aslay and "autoslays" or "autojails") .. " to {T} ({V_2}).", {
+                        A = admin and admin:Nick() or "Console",
+                        V = slays,
+                        T = steamid,
+                        V_2 = reason
+                    })
+                end
             end
 
             NetworkSlays(steamid, slays)
@@ -389,10 +463,7 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                             end
                         end
 
-                        if not IsValid(v) then
-                            return
-                        end
-
+                        if not IsValid(v) then return end
                         v.jail = nil
                     end
 
@@ -431,11 +502,7 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
 
                 if IsValid(v.server_ragdoll) then
                     local ply = player.GetBySteamID(v.server_ragdoll.sid)
-
-                    if not IsValid(ply) then
-                        return
-                    end
-
+                    if not IsValid(ply) then return end
                     ply:SetCleanRound(false)
                     ply:SetNWBool("body_found", true)
 
@@ -452,7 +519,7 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
 end)
 
 hook.Add("PlayerDisconnected", "Autoslay_Message", function(ply)
-    if tonumber(ply.AutoslaysLeft) and ply.AutoslaysLeft > 0 then
+    if ply.AutoslaysLeft and tonumber(ply.AutoslaysLeft) > 0 then
         net.Start("DL_PlayerLeft")
         net.WriteString(ply:Nick())
         net.WriteString(ply:SteamID())
@@ -472,10 +539,7 @@ if Damagelog.ULX_Autoslay_ForceRole then
             end
 
             local function GetDetectiveCount(ply_count)
-                if ply_count < GetConVar("ttt_detective_min_players"):GetInt() then
-                    return 0
-                end
-
+                if ply_count < GetConVar("ttt_detective_min_players"):GetInt() then return 0 end
                 local det_count = math.floor(ply_count * GetConVar("ttt_detective_pct"):GetFloat())
                 det_count = math.Clamp(det_count, 1, GetConVar("ttt_detective_max"):GetInt())
 
@@ -508,11 +572,7 @@ if Damagelog.ULX_Autoslay_ForceRole then
                 local choice_count = #choices
                 local traitor_count = GetTraitorCount(choice_count)
                 local det_count = GetDetectiveCount(choice_count)
-
-                if choice_count == 0 then
-                    return
-                end
-
+                if choice_count == 0 then return end
                 local ts = 0
 
                 while ts < traitor_count do

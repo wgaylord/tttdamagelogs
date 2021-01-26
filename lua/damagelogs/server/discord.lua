@@ -11,6 +11,10 @@ local emitOnlyWhenAdminsOffline = Damagelog.DiscordWebhookMode == POST_MODES.WHE
 local limit = 5
 local reset = 0
 
+local use_chttp = pcall(require, "chttp")
+if use_chttp then
+    HTTP = CHTTP
+end
 
 local function SendDiscordMessage(embed)
     local now = os.time(os.date("!*t"))
@@ -98,7 +102,7 @@ function Damagelog:DiscordMessage(discordUpdate)
     end
 
 
-    if discordUpdate.reportHandled != nil then
+    if discordUpdate.reportHandled ~= nil then
         data.title = TTTLogTranslate(nil, "webhook_header_report_finished"):format(discordUpdate.reportId)
         data.color = 0x0394fc
 
@@ -118,7 +122,7 @@ function Damagelog:DiscordMessage(discordUpdate)
             value = string.format("%02d:%02d minutes", minutesTaken, secondsTaken),
             inline = true
         }
-        table.insert(data.fields, reportHandlerTimeRow)
+         table.insert(data.fields, reportHandlerTimeRow)
 
         if(discordUpdate.reportHandled.conclusion != nil) then
             local conclusionRow = {
