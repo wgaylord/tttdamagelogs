@@ -7,7 +7,9 @@ This is an administration tool which allows server admins to handle player repor
 
 <br>
 
-Get it on the Steam Workshop:<br>
+## Download
+![workshop](https://i.imgur.com/68y5pjP.png)<br>
+Get this addon on the Steam Workshop:<br>
 https://steamcommunity.com/sharedfiles/filedetails/?id=2306802961
 
 ---
@@ -34,7 +36,8 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=2306802961
 
 ## Latest Version
 
-Get the latest version from the [Releases](https://github.com/BadgerCode/tttdamagelogs/releases) section.
+The latest version can be found on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2306802961).<br>
+Alternatively, you can download the latest version from the [Releases](https://github.com/BadgerCode/tttdamagelogs/releases) section of this repository.
 
 <br>
 
