@@ -268,7 +268,7 @@ local function CreateCommand()
             :OnExecute(function(admin, promise, slays, reason)
                 promise:done(function(data)
                     local steamid, target = data[1], data[2] -- target will be "nil" if player is not online -- target will be "nil" if player is not online
-                    Damagelog:SetSlays(admin, steamid:SteamID(), slays, reason, target)
+                    Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 end)
             end)
         :End()
