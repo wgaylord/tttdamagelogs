@@ -342,9 +342,9 @@ local function TakeAction()
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "TheVictim") .. " (" .. report.victim_nick .. ")", function()
             if IsValid(victim) then
                 if ulx then
-                    RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                    RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif sam then
-                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                    RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif serverguard then
                     serverguard.command.Run("raslay", false, victim:Nick())
                 end
