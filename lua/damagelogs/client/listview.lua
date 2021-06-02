@@ -220,7 +220,7 @@ hook.Add("Initialize", "damagelogs_gminit_rolecolours", function()
 end)
 
 function Damagelog:AddRoleLine(listview, nick, role)
-    if role ~= -3 then
+    if role ~= -3 and role ~= -2 then
         local item = listview:AddLine(nick, self:StrRole(role), "")
 
         function item:PaintOver()
