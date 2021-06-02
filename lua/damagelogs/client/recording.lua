@@ -531,12 +531,6 @@ hook.Add("Think", "Think_Record", function()
             changed = true
         end
 
-        if changed and current_spec == 0 then
-            net.Start("DL_UpdateLogEnt")
-            net.WriteUInt(0, 1)
-            net.SendToServer()
-        end
-
         for k, v in pairs(scene or {}) do
             if v.prop then
                 if not props[k] then
@@ -647,9 +641,6 @@ end
 
 function Damagelog:StopRecording()
     self.DSPanel:Remove()
-    net.Start("DL_UpdateLogEnt")
-    net.WriteUInt(0, 1)
-    net.SendToServer()
 
     for _, v in pairs(models) do
         if IsValid(v) then
