@@ -1,3 +1,4 @@
+AddCSLuaFile("damagelogs/shared/defines.lua")
 AddCSLuaFile("damagelogs/config/config.lua")
 AddCSLuaFile("damagelogs/shared/lang.lua")
 AddCSLuaFile("damagelogs/shared/notify.lua")
@@ -17,6 +18,7 @@ AddCSLuaFile("damagelogs/client/listview.lua")
 AddCSLuaFile("damagelogs/client/recording.lua")
 AddCSLuaFile("damagelogs/client/settings.lua")
 AddCSLuaFile("damagelogs/shared/autoslay.lua")
+include("damagelogs/shared/defines.lua")
 include("damagelogs/config/config.lua")
 include("damagelogs/config/mysqloo.lua")
 include("damagelogs/server/sqlite.lua")
@@ -85,9 +87,11 @@ function Player:SetDamagelogID(id)
     self.DamagelogID = id
 end
 
-function Player:AddToDamagelogRoles(spawned)
+function Player:AddToDamagelogRoles(joinedAfterRoundStart)
     local id = table.insert(Damagelog.Roles[#Damagelog.Roles], {
-        role = (spawned and -2) or (self:IsSpec() and -3) or self:GetRole(),
+        role = (joinedAfterRoundStart and DAMAGELOG_ROLE_JOINAFTERROUNDSTART)
+            or (self:IsSpec() and DAMAGELOG_ROLE_SPECTATOR)
+            or self:GetRole(),
         steamid64 = self:SteamID64(),
         nick = self:Nick()
     })
@@ -131,7 +135,7 @@ function Damagelog:TTTBeginRound()
         self.Roles[rounds + 1] = {}
 
         for _, v in ipairs(player.GetAll()) do
-            v:AddToDamagelogRoles()
+            v:AddToDamagelogRoles(false)
         end
 
         self.CurrentRound = rounds + 1

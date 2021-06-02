@@ -206,55 +206,51 @@ local role_colors = { }
 -- We need to wait for the TTT gamemode to init to ensure the ROLE_XXX values are defined
 hook.Remove("Initialize", "damagelogs_gminit_rolecolours")
 hook.Add("Initialize", "damagelogs_gminit_rolecolours", function()
-    -- Defined in terrortown/gamemode/shared.lua
-    -- ROLE_INNOCENT  = 0
-    -- ROLE_TRAITOR   = 1
-    -- ROLE_DETECTIVE = 2
-
+    -- Roles are defined in lua/damagelogs/shared/defines.lua
     role_colors = {
         [ROLE_INNOCENT] = Color(0, 200, 0),
         [ROLE_TRAITOR] = Color(200, 0, 0),
         [ROLE_DETECTIVE] = Color(0, 0, 200),
-        ["disconnected"] = Color(0, 0, 0)
+        [DAMAGELOG_ROLE_DISCONNECTED] = Color(0, 0, 0)
     }
 end)
 
 function Damagelog:AddRoleLine(listview, nick, role)
-    if role ~= -3 and role ~= -2 then
-        local item = listview:AddLine(nick, self:StrRole(role), "")
+    if role == DAMAGELOG_ROLE_JOINAFTERROUNDSTART or role == DAMAGELOG_ROLE_SPECTATOR then return end
 
-        function item:PaintOver()
-            for _, v in pairs(item.Columns) do
-                if role < 0 then
-                    v:SetTextColor(role_colors["disconnected"])
-                else
-                    if not ROLES then
-                        v:SetTextColor(role_colors[role])
-                    else
-                        v:SetTextColor(GetRoleByIndex(role).color)
-                    end
-                end
-            end
-        end
+    local item = listview:AddLine(nick, self:StrRole(role), "")
 
-        item.Nick = nick
-        item.Round = self.SelectedRound
-        local sync_ent = self:GetSyncEnt()
-
-        item.Think = function(panel)
-            if GetRoundState() == ROUND_ACTIVE and sync_ent:GetPlayedRounds() == panel.Round then
-                local ent = self.RoleNicks and self.RoleNicks[panel.Nick]
-
-                if IsValid(ent) then
-                    panel:SetColumnText(3, ent:Alive() and not (ent.IsGhost and ent:IsGhost()) and not ent:IsSpec() and TTTLogTranslate(GetDMGLogLang, "Yes") or TTTLogTranslate(GetDMGLogLang, "No"))
-                else
-                    panel:SetColumnText(3, TTTLogTranslate(GetDMGLogLang, "ChatDisconnected"))
-                end
+    function item:PaintOver()
+        for _, v in pairs(item.Columns) do
+            if role < 0 then
+                v:SetTextColor(role_colors[DAMAGELOG_ROLE_DISCONNECTED])
             else
-                panel:SetColumnText(3, TTTLogTranslate(GetDMGLogLang, "RoundEnded"))
+                if not ROLES then
+                    v:SetTextColor(role_colors[role])
+                else
+                    v:SetTextColor(GetRoleByIndex(role).color)
+                end
             end
         end
-    end -- TODO what is with role == -1 and -2 ? or "disconnected" ?
+    end
+
+    item.Nick = nick
+    item.Round = self.SelectedRound
+    local sync_ent = self:GetSyncEnt()
+
+    item.Think = function(panel)
+        if GetRoundState() == ROUND_ACTIVE and sync_ent:GetPlayedRounds() == panel.Round then
+            local ent = self.RoleNicks and self.RoleNicks[panel.Nick]
+
+            if IsValid(ent) then
+                panel:SetColumnText(3, ent:Alive() and not (ent.IsGhost and ent:IsGhost()) and not ent:IsSpec() and TTTLogTranslate(GetDMGLogLang, "Yes") or TTTLogTranslate(GetDMGLogLang, "No"))
+            else
+                panel:SetColumnText(3, TTTLogTranslate(GetDMGLogLang, "ChatDisconnected"))
+            end
+        else
+            panel:SetColumnText(3, TTTLogTranslate(GetDMGLogLang, "RoundEnded"))
+        end
+    end
 end
 
 local shoot_colors = {

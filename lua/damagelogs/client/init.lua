@@ -8,6 +8,7 @@ cvars.AddChangeCallback("ttt_dmglogs_language", function(convar_name, value_old,
     net.SendToServer()
 end)
 
+include("damagelogs/shared/defines.lua")
 include("damagelogs/config/config.lua")
 include("damagelogs/shared/lang.lua")
 include("damagelogs/client/settings.lua")
@@ -208,13 +209,13 @@ function Damagelog:StrRole(role)
             return TTTLogTranslate(GetDMGLogLang, "traitor")
         elseif role == ROLE_DETECTIVE then
             return TTTLogTranslate(GetDMGLogLang, "detective")
-        elseif role == "disconnected" then
+        elseif role == DAMAGELOG_ROLE_DISCONNECTED then
             return TTTLogTranslate(GetDMGLogLang, "disconnected")
         else
             return TTTLogTranslate(GetDMGLogLang, "innocent")
         end
     else
-        if role == "disconnected" then
+        if role == DAMAGELOG_ROLE_DISCONNECTED then
             return TTTLogTranslate(GetDMGLogLang, "disconnected")
         else
             return TTTLogTranslate(GetDMGLogLang, GetRoleByIndex(role).name)
