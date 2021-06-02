@@ -1,6 +1,5 @@
 util.AddNetworkString("DL_AskDeathScene")
 util.AddNetworkString("DL_SendDeathScene")
-util.AddNetworkString("DL_UpdateLogEnt")
 Damagelog.Records = Damagelog.Records or {}
 Damagelog.Death_Scenes = Damagelog.Death_Scenes or {}
 Damagelog.SceneID = Damagelog.SceneID or 0
