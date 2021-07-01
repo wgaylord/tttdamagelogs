@@ -18,10 +18,10 @@ function event:DoPlayerDeath(ply, attacker, dmginfo)
     if (attacker:IsWorld() and dmginfo:IsDamageType(DMG_DROWN)) then return end
 
     -- Ignore player kills. These are handled in the kills.lua event file
-    if (IsValid(attacker) and attacker:IsPlayer() and attacker != ply) then return end
+    if (IsValid(attacker) and attacker:IsPlayer() and attacker ~= ply) then return end
 
     -- Ignore players being pushed to their death. This is handled in kills.lua
-    if (ply:GetPlayerThatRecentlyPushedMe() != nil) then return end
+    if (ply:GetPlayerThatRecentlyPushedMe() ~= nil) then return end
 
     Damagelog.SceneID = Damagelog.SceneID + 1
     local scene = Damagelog.SceneID

@@ -827,8 +827,9 @@ net.Receive("DL_AllowReport", function()
 
     for i = 1, playerCount do
         local ply = net.ReadEntity()
-        if not IsValid(ply) or not ply:IsPlayer() then continue end
-        dnas[ply] = net.ReadUInt(1) == 1
+        if IsValid(ply) and not ply:IsPlayer() then
+            dnas[ply] = net.ReadUInt(1) == 1
+        end
     end
 
     Damagelog:ReportWindow(found, deathLogs, previousReports, currentReports, dnas)

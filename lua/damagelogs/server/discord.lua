@@ -73,7 +73,7 @@ function Damagelog:DiscordMessage(discordUpdate)
     }
 
 
-    if discordUpdate.responseMessage != nil then
+    if discordUpdate.responseMessage ~= nil then
         local forgivenRow = {
             name = TTTLogTranslate(nil, "ReportedPlayerResponse") .. ":",
             value = discordUpdate.responseMessage:gsub("([%*_~<>\\@[])", "\\%1")
@@ -82,7 +82,7 @@ function Damagelog:DiscordMessage(discordUpdate)
     end
 
 
-    if discordUpdate.reportForgiven != nil then
+    if discordUpdate.reportForgiven ~= nil then
         local rowMessage = ""
         if discordUpdate.reportForgiven.forgiven then
             data.title = TTTLogTranslate(nil, "webhook_header_report_forgiven"):format(discordUpdate.reportId)
@@ -124,7 +124,7 @@ function Damagelog:DiscordMessage(discordUpdate)
         }
          table.insert(data.fields, reportHandlerTimeRow)
 
-        if(discordUpdate.reportHandled.conclusion != nil) then
+        if(discordUpdate.reportHandled.conclusion ~= nil) then
             local conclusionRow = {
                 name = TTTLogTranslate(nil, "webhook_report_finished_conclusion") .. ":",
                 value = discordUpdate.reportHandled.conclusion

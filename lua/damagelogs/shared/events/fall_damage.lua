@@ -30,7 +30,7 @@ function event:EntityTakeDamage(ent, dmginfo)
 
             local playerThatPushed = ent:GetPlayerThatRecentlyPushedMe()
 
-            if playerThatPushed != nil then
+            if playerThatPushed ~= nil then
                 tbl[EVENT_DETAILS.WasVictimPushed]  = true
                 tbl[EVENT_DETAILS.AttackerId]       = playerThatPushed:GetDamagelogID()
             end
@@ -65,7 +65,7 @@ function event:GetColor(tbl, roles)
         local ent = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.VictimId])
         local att = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.AttackerId])
 
-        if att != nil && Damagelog:IsTeamkill(att.role, ent.role) then
+        if att ~= nil && Damagelog:IsTeamkill(att.role, ent.role) then
             return Damagelog:GetColor("color_team_damages")
         end
     end
