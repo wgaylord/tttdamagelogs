@@ -46,7 +46,9 @@ function event:DoPlayerDeath(ply, attacker, dmginfo)
     if GetRoundState() == ROUND_ACTIVE then
         net.Start("DL_Ded")
 
-        if not ROLES and attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE) or ROLES and attacker:HasTeamRole(TEAM_TRAITOR) and not ply:HasTeamRole(TEAM_TRAITOR) then
+        if attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE)
+                or TTT2 and attacker:HasTeamRole(TEAM_TRAITOR) and not ply:HasTeamRole(TEAM_TRAITOR)
+                or CR_VERSION and attacker:IsTraitorTeam() and not ply:IsTraitorTeam() then
             net.WriteUInt(0, 1)
         else
             net.WriteUInt(1, 1)

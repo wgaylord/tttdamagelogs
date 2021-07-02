@@ -506,7 +506,8 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                     ply:SetCleanRound(false)
                     ply:SetNWBool("body_found", true)
 
-                    if not ROLES and ply:GetRole() == ROLE_TRAITOR or ROLES and ply:HasTeamRole(TEAM_TRAITOR) then
+                    if ply:GetRole() == ROLE_TRAITOR or TTT2 and ply:HasTeamRole(TEAM_TRAITOR)
+                            or CR_VERSION and ply:IsTraitorTeam() then
                         SendConfirmedTraitors(GetInnocentFilter(false))
                     end
 
@@ -530,7 +531,7 @@ end)
 
 if Damagelog.ULX_Autoslay_ForceRole then
     hook.Add("Initialize", "Autoslay_ForceRole", function()
-        if not ROLES then
+        if not TTT2 and not CR_VERSION then
             local function GetTraitorCount(ply_count)
                 local traitor_count = math.floor(ply_count * GetConVar("ttt_traitor_pct"):GetFloat())
                 traitor_count = math.Clamp(traitor_count, 1, GetConVar("ttt_traitor_max"):GetInt())
