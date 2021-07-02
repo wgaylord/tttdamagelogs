@@ -827,7 +827,7 @@ net.Receive("DL_AllowReport", function()
 
     for i = 1, playerCount do
         local ply = net.ReadEntity()
-        if IsValid(ply) and not ply:IsPlayer() then
+        if IsValid(ply) and ply:IsPlayer() then
             dnas[ply] = net.ReadUInt(1) == 1
         end
     end
