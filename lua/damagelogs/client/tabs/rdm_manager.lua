@@ -423,7 +423,13 @@ function PANEL:UpdateReport(index)
 
     local tbl = {report.index, report.adminReport and "N/A (Admin Report)" or report.victim_nick, report.attacker_nick, report.round or "?", str, report.adminReport and "N/A" or "", self:GetStatus(report)}
 
+    local cancelledIcon = report.status == RDM_MANAGER_WAITING
+        and "icon16/exclamation.png"
+        or (report.canceled and "icon16/tick.png" or "icon16/cross.png")
+
     if not self.Reports[index] then
+        -- We have received a new report/an existing report for the first time
+
         if report.status ~= RDM_MANAGER_FINISHED or show_finished:GetBool() then
             self.Reports[index] = self:AddLine(unpack(tbl))
             self.Reports[index].status = report.status
@@ -433,7 +439,7 @@ function PANEL:UpdateReport(index)
 
             self.Reports[index].CanceledIcon = vgui.Create("DImage", self.Reports[index])
             self.Reports[index].CanceledIcon:SetSize(16, 16)
-            self.Reports[index].CanceledIcon:SetImage(report.canceled and "icon16/tick.png" or "icon16/cross.png")
+            self.Reports[index].CanceledIcon:SetImage(cancelledIcon)
             self.Reports[index].CanceledIcon:SetPos(self.CanceledPos + self.CanceledWidth / 2 - 10)
 
             if report.adminReport then
@@ -475,6 +481,8 @@ function PANEL:UpdateReport(index)
             self.Reports[index] = false
         end
     else
+        -- We have received an update for a report we have seen before
+
         self.Reports[index].status = report.status
         self.Reports[index].index = report.index
 
@@ -486,7 +494,7 @@ function PANEL:UpdateReport(index)
             end
         end
 
-        self.Reports[index].CanceledIcon:SetImage(report.canceled and "icon16/tick.png" or "icon16/cross.png")
+        self.Reports[index].CanceledIcon:SetImage(cancelledIcon)
 
         if report.conclusion then
             local selected = Damagelog.SelectedReport
