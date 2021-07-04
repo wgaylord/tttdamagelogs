@@ -1,5 +1,8 @@
 # TTT Damagelogs
-Created by Tommy228
+Created by Tommy228<br>
+_Supports [TTT2](https://steamcommunity.com/sharedfiles/filedetails/?id=1357204556) and [Custom Roles](https://steamcommunity.com/sharedfiles/filedetails/?id=2421039084)_
+
+<br>
 
 This is an administration tool which allows server admins to handle player reports during a game of Trouble in Terrorist Town.
 
@@ -31,6 +34,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=2306802961
 - Support for ULX and Serverguard: User groups and RDM punishments
 - Easy configuration via config file and F1 settings menu
 - Discord notifications for reports
+- Supports [TTT2](https://steamcommunity.com/sharedfiles/filedetails/?id=1357204556) and [Custom Roles](https://steamcommunity.com/sharedfiles/filedetails/?id=2421039084)
 
 <br>
 
