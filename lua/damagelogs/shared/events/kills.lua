@@ -12,7 +12,7 @@ event.Type = "KILL"
 function event:DoPlayerDeath(ply, attacker, dmginfo)
     -- If the player was pushed, set the attacker to the person that pushed them
     local playerThatPushed = ply:GetPlayerThatRecentlyPushedMe()
-    if (playerThatPushed != nil and dmginfo:GetDamageType() == DMG_FALL and attacker:IsWorld()) then
+    if (playerThatPushed ~= nil and dmginfo:GetDamageType() == DMG_FALL and attacker:IsWorld()) then
         attacker = playerThatPushed
     end
 
@@ -21,7 +21,7 @@ function event:DoPlayerDeath(ply, attacker, dmginfo)
 
     -- Ignore suicides/drownings. These are handled in the suicide.lua event file
     -- This may also ignore environmental deaths, caused by another player
-    if (IsValid(attacker) and attacker:IsPlayer() and attacker != ply) == false then return end
+    if (IsValid(attacker) and attacker:IsPlayer() and attacker ~= ply) == false then return end
 
     local scene = false
     Damagelog.SceneID = Damagelog.SceneID + 1
@@ -46,7 +46,9 @@ function event:DoPlayerDeath(ply, attacker, dmginfo)
     if GetRoundState() == ROUND_ACTIVE then
         net.Start("DL_Ded")
 
-        if not ROLES and attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE) or ROLES and attacker:HasTeamRole(TEAM_TRAITOR) and not ply:HasTeamRole(TEAM_TRAITOR) then
+        if attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE)
+                or TTT2 and attacker:HasTeamRole(TEAM_TRAITOR) and not ply:HasTeamRole(TEAM_TRAITOR)
+                or CR_VERSION and attacker:IsTraitorTeam() and not ply:IsTraitorTeam() then
             net.WriteUInt(0, 1)
         else
             net.WriteUInt(1, 1)

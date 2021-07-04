@@ -172,7 +172,7 @@ end)
 function Damagelog:WeaponFromDmg(dmg)
     local inf = dmg:GetInflictor()
     local wep = nil
-    local isWorldDamage = inf != nil and inf.IsWorld and inf:IsWorld()
+    local isWorldDamage = inf ~= nil and inf.IsWorld and inf:IsWorld()
 
     if IsValid(inf) or isWorldDamage then
         if inf:IsWeapon() or inf.Projectile then

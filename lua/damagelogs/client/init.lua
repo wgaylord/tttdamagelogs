@@ -204,21 +204,21 @@ hook.Add("Think", "Think_Damagelog", function()
 end)
 
 function Damagelog:StrRole(role)
-    if not ROLES then
-        if role == ROLE_TRAITOR then
-            return TTTLogTranslate(GetDMGLogLang, "traitor")
-        elseif role == ROLE_DETECTIVE then
-            return TTTLogTranslate(GetDMGLogLang, "detective")
-        elseif role == DAMAGELOG_ROLE_DISCONNECTED then
-            return TTTLogTranslate(GetDMGLogLang, "disconnected")
-        else
-            return TTTLogTranslate(GetDMGLogLang, "innocent")
-        end
+    if role == DAMAGELOG_ROLE_DISCONNECTED then
+        return TTTLogTranslate(GetDMGLogLang, "disconnected")
     else
-        if role == DAMAGELOG_ROLE_DISCONNECTED then
-            return TTTLogTranslate(GetDMGLogLang, "disconnected")
-        else
+        if TTT2 then
             return TTTLogTranslate(GetDMGLogLang, GetRoleByIndex(role).name)
+        elseif CR_VERSION then
+            return TTTLogTranslate(GetDMGLogLang, ROLE_STRINGS[role])
+        else
+            if role == ROLE_TRAITOR then
+                return TTTLogTranslate(GetDMGLogLang, "traitor")
+            elseif role == ROLE_DETECTIVE then
+                return TTTLogTranslate(GetDMGLogLang, "detective")
+            else
+                return TTTLogTranslate(GetDMGLogLang, "innocent")
+            end
         end
     end
 end
