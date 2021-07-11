@@ -1181,6 +1181,10 @@ function PANEL:Init()
     self.Minutes:SizeToContents()
     self.CurrentBanType = self.MINUTES
 
+    self.BanTime.OnChange = function(panel)
+        self:UpdateBanTime()
+    end
+
     self.Minutes.OnChange = function(panel)
         if panel:GetChecked() then
             self.CurrentBanType = self.MINUTES
