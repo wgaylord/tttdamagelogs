@@ -187,12 +187,14 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
         local data = Damagelog.SQLiteDatabase.QuerySingle(string.format("SELECT * FROM damagelog_autoslay WHERE ply = %s", sql.SQLStr(steamid)))
 
         if data then
-            local adminid
+            local adminid, admin_nick
 
             if IsValid(admin) and type(admin) == "Player" then
                 adminid = admin:SteamID()
+                admin_nick = admin:Nick()
             else
                 adminid = "Console"
+                admin_nick = "Console"
             end
 
             local old_slays = tonumber(data.slays)
@@ -247,7 +249,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
                 Damagelog.SQLiteDatabase.Query(string.format(
                     "UPDATE damagelog_autoslay SET admins = %s, slays = %i, reason = %s, time = %s WHERE ply = %s",
-                    sql.SQLStr(new_admins),
+                    sql.SQLStr(admin_nick),
                     slays,
                     sql.SQLStr(reason),
                     tostring(os.time()),
