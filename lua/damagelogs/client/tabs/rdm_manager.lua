@@ -1018,7 +1018,7 @@ function PANEL:Init()
     self.Reason:SetText(TTTLogTranslate(GetDMGLogLang, "Reason"))
     self.CREnable = vgui.Create("DCheckBox", self)
     self.CREnable:SetPos(self.Distance / 2 + self.Dimension / 2, self.Dimension * 2 / 3 + 5)
-    self.CREnable:SetValue(1)
+    self.CREnable:SetValue(0)
 
     function self.CREnable.OnChange(panel, reasonTxt)
         self:UpdateReason()
