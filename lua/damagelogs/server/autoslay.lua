@@ -221,6 +221,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                     elseif sam then
                         sam.player.send_message(admin, "{T} was already {V_1} {V} time(s) by {A} for {V_2}.", {
                             T = target:Nick(),
+                            V = slays,
                             V_1 = string.format("%s", aslay and "autoslain" or "autojailed"),
                             A = list,
                             V_2 = reason
@@ -238,6 +239,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                     elseif sam then
                         sam.player.send_message(admin, "{T} was already {V_1} {V} time(s) by {A} for {V_2}.", {
                             T = steamid,
+                            V = slays,
                             V_1 = string.format("%s", aslay and "autoslain" or "autojailed"),
                             A = list,
                             V_2 = reason
@@ -270,7 +272,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                         ulx.fancyLogAdmin(admin, "#A " .. (difference > 0 and "added " or "removed ") .. math.abs(difference) .. msg .. old_slays .. " time(s) by #s.", target, reason, list)
                     elseif sam then
                         sam.player.send_message(nil, "{A} {V_1} {V} {V_2} {T} for {R}. They were previously {V_3} {V_4} time(s) by {V_5}.", {
-                            A = admin and admin:Nick() or "Console",
+                            A = admin_nick,
                             V_1 = difference > 0 and "added " or "removed ",
                             V = math.abs(difference),
                             V_2 = aslay and " autoslays to " or " autojails to ",
@@ -292,7 +294,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                         ulx.fancyLogAdmin(admin, "#A " .. (difference > 0 and "added " or "removed ") .. math.abs(difference) .. msg .. old_slays .. " time(s) by #s.", steamid, reason, list)
                     elseif sam then
                         sam.player.send_message(nil, "{A} {V_1} {V} {V_2} {T} for {R}. They were previously {V_3} {V_4} time(s) by {V_5}.", {
-                            A = admin and admin:Nick() or "Console",
+                            A = admin_nick,
                             V_1 = difference > 0 and "added " or "removed ",
                             V = math.abs(difference),
                             V_2 = aslay and " autoslays to " or " autojails to ",
@@ -308,12 +310,14 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 NetworkSlays(steamid, slays)
             end
         else
-            local admins
+            local admins, admin_nick
 
             if IsValid(admin) and type(admin) == "Player" then
                 admins = util.TableToJSON({admin:SteamID()})
+                admin_nick = admin:Nick()
             else
                 admins = util.TableToJSON({"Console"})
+                admin_nick = "Console"
             end
 
             Damagelog.SQLiteDatabase.Query(string.format("INSERT INTO damagelog_autoslay (`admins`, `ply`, `slays`, `reason`, `time`) VALUES (%s, '%s', %i, %s, %s);", sql.SQLStr(admins), steamid, slays, sql.SQLStr(reason), tostring(os.time())))
@@ -330,7 +334,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                     ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, target, reason)
                 elseif sam then
                     sam.player.send_message(nil, "{A} added {V} " .. (aslay and "autoslays" or "autojails") .. " to {T} ({V_2}).", {
-                        A = admin and admin:Nick() or "Console",
+                        A = admin_nick,
                         V = slays,
                         T = target:Nick(),
                         V_2 = reason
@@ -347,7 +351,7 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                     ulx.fancyLogAdmin(admin, "#A added " .. slays .. msg, steamid, reason)
                 elseif sam then
                     sam.player.send_message(nil, "{A} added {V} " .. (aslay and "autoslays" or "autojails") .. " to {T} ({V_2}).", {
-                        A = admin and admin:Nick() or "Console",
+                        A = admin_nick,
                         V = slays,
                         T = steamid,
                         V_2 = reason
