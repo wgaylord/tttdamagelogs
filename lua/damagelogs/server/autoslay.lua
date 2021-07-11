@@ -503,6 +503,14 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                 net.WriteString(Damagelog:FormatTime(tonumber(os.time()) - tonumber(_time)))
                 net.Broadcast()
 
+                if Damagelog.ShowRemainingSlays then
+                    local slaycounter = (slays > 0 and slays) or "no"
+
+                    for m, n in pairs(player.GetHumans()) do
+                        n:PrintMessage(HUD_PRINTTALK, v:Name() .. " has " .. slaycounter .. " remaining autoslays.")
+                    end
+                end
+
                 if IsValid(v.server_ragdoll) then
                     local ply = player.GetBySteamID(v.server_ragdoll.sid)
                     if not IsValid(ply) then return end
