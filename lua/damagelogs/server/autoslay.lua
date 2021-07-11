@@ -12,7 +12,7 @@ if not sql.TableExists("damagelog_autoslay") then
 		ply varchar(32) NOT NULL,
 		admins tinytext NOT NULL,
 		slays SMALLINT UNSIGNED NOT NULL,
-		reason tinytext NOT NULL,
+		reason varchar(255) NOT NULL,
 		time BIGINT UNSIGNED NOT NULL);
 	]])
 end
