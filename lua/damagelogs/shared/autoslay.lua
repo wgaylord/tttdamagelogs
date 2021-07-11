@@ -166,14 +166,16 @@ local function CreateCommand()
             local data = Damagelog.SQLiteDatabase.QuerySingle(string.format("SELECT * FROM damagelog_autoslay WHERE ply = %s", sql.SQLStr(target:SteamID())))
             local txt = aslay and "slays" or "jails"
             local p = "has"
+            local t = target:Name()
 
             if calling_ply == target then
                 p = "have"
+                t = "You"
             end
 
             if data then
                 sam.player.send_message(calling_ply, "{T} {V_1} {V} {V_2} left with the reason : {V_3}", {
-                    T = target:Name(),
+                    T = t,
                     V_1 = p,
                     V = data.slays,
                     V_2 = txt,
@@ -181,7 +183,7 @@ local function CreateCommand()
                 })
             else
                 sam.player.send_message(calling_ply, "{T} {V_1} no {V_2} left.", {
-                    T = target:Name(),
+                    T = t,
                     V_1 = p,
                     V_2 = txt
                 })
