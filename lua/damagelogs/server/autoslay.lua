@@ -161,7 +161,6 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
     if slays == 0 then
         Damagelog.SQLiteDatabase.Query("DELETE FROM damagelog_autoslay WHERE ply = '" .. (target and target:SteamID() or steamid) .. "';")
-        local name = self:GetName(steamid)
 
         if ulx then
             if target then
@@ -206,7 +205,6 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
 
             if old_slays == slays then
                 local list = self:CreateSlayList(old_steamids)
-                local nick = self:GetName(steamid)
                 local msg
 
                 if target then
@@ -257,7 +255,6 @@ function Damagelog:SetSlays(admin, steamid, slays, reason, target)
                 ))
 
                 local list = self:CreateSlayList(old_steamids)
-                local nick = self:GetName(steamid)
                 local msg
 
                 if target then
