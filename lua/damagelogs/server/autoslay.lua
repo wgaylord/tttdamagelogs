@@ -506,9 +506,6 @@ hook.Add("TTTBeginRound", "Damagelog_AutoSlay", function()
                     ply:SetCleanRound(false)
                     ply:SetNWBool("body_found", true)
 
-                    print("ply:GetRole() " .. tostring(ply:GetRole()))
-                    print("ply:IsRole(")
-
                     if ply:GetRole() == ROLE_TRAITOR
                       or TTT2 and ply:GetTeam() == TEAM_TRAITOR
                       or CR_VERSION and ply:IsTraitorTeam() then
