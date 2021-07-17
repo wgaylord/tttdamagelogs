@@ -116,3 +116,7 @@ Damagelog.DiscordWebhookMode = 0
 
 
 -- Don't forget to set the value of "ttt_dmglogs_discordurl" convar to your webhook URL in server.cfg
+
+-- Should all players get notified about the amount of remaining slays of a slain player?
+
+Damagelog.ShowRemainingSlays = false

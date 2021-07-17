@@ -65,7 +65,7 @@ function event:GetColor(tbl, roles)
         local ent = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.VictimId])
         local att = Damagelog:InfoFromID(roles, tbl[EVENT_DETAILS.AttackerId])
 
-        if att ~= nil && Damagelog:IsTeamkill(att.role, ent.role) then
+        if att ~= nil and Damagelog:IsTeamkill(att.role, ent.role) then
             return Damagelog:GetColor("color_team_damages")
         end
     end
