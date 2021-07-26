@@ -6,7 +6,6 @@ local player_GetHumans = player.GetHumans
 local table_Copy, table_Empty, table_insert, table_HasValue = table.Copy, table.Empty, table.insert, table.HasValue
 local string_Left, string_lower, string_gsub, string_format = string.Left, string.lower, string.gsub, string.format
 util.AddNetworkString("DL_AllowReport")
-util.AddNetworkString("DL_AllowMReports")
 util.AddNetworkString("DL_ReportPlayer")
 util.AddNetworkString("DL_UpdateReports")
 util.AddNetworkString("DL_UpdateReport")
