@@ -219,7 +219,6 @@ DamagelogLang.russian = {
     NoWeapon = "<Без оружия>",
     scorpse = " (труп)",
     TakeAction = "Принять меры",
-    HaventReported = "Вы ни на кого не жаловались!",
     RDMConclusion = "Заключение",
     ViewPreviousReports = "Посмотреть жалобы",
     YourReport = "Ваша жалоба",

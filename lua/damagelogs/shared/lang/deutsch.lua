@@ -221,7 +221,6 @@ DamagelogLang.deutsch = {
     NoWeapon = "<Keine Waffe>",
     scorpse = "'s Leiche",
     TakeAction = "Aktion einleiten",
-    HaventReported = "Du hast niemanden gemeldet! Keine Reports zum Anzeigen.",
     RDMConclusion = "Zusammenfassung",
     ViewPreviousReports = "Zeige Reports an",
     YourReport = "Deine Nachricht",
