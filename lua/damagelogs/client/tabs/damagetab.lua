@@ -283,6 +283,13 @@ function Damagelog:DrawDamageTab(x, y)
     self.Damagelog.EventColumn:SetFixedWidth(529)
     self.Damagelog.IconColumn = self.Damagelog:AddColumn("")
     self.Damagelog.IconColumn:SetFixedWidth(30)
+    
+    Damagelog.Menu.OnClose = function()
+        if IsValid(Damagelog.OldLogsShoots) then
+            Damagelog.OldLogsShoots:Close()
+            Damagelog.OldLogsShoots:Remove()
+        end
+    end
 
     self.Damagelog.Think = function(panel)
         if panel.VBar.Enabled and not panel.Scrollbar then
@@ -307,6 +314,11 @@ function Damagelog:DrawDamageTab(x, y)
 
     self.Round.OnSelect = function(_, value, index, data)
         self.SelectedRound = data
+        
+        net.Start("DL_AskOldLog")
+            net.WriteUInt(data, 32)
+            net.WriteBool(true)
+        net.SendToServer()
 
         if self.Round.FirstSelect then
             self.Round.FirstSelect = false
@@ -477,7 +489,8 @@ end)
 net.Receive("DL_RefreshDamagelog", function()
     local client = LocalPlayer()
     local len = net.ReadUInt(32)
-    local tbl = util.JSONToTable(util.Decompress(net.ReadData(len)))
+    local data = net.ReadData(len)
+    local tbl = util.JSONToTable(util.Decompress(data))
 
     if not IsValid(client) then
         return
