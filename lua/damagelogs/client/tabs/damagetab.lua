@@ -81,9 +81,10 @@ function Damagelog:DrawDamageTab(x, y)
         self.Damagelog:Clear()
         self.Damagelog:AddLine("", "", TTTLogTranslate(GetDMGLogLang, "Loading"))
         self.receiving = true
+        
         net.Start("DL_AskDamagelog")
         net.WriteInt(self.SelectedRound, 32)
-        net.SendToServer()
+        net.SendToServer()    
     end
 
     self.DamageTab = vgui.Create("DListLayout")
@@ -315,10 +316,12 @@ function Damagelog:DrawDamageTab(x, y)
     self.Round.OnSelect = function(_, value, index, data)
         self.SelectedRound = data
         
-        net.Start("DL_AskOldLog")
-            net.WriteUInt(data, 32)
-            net.WriteBool(true)
-        net.SendToServer()
+        if GetConVar("ttt_dmglogs_shotlogsondamagetab"):GetBool() then
+            net.Start("DL_AskOldLog")
+                net.WriteUInt(data, 32)
+                net.WriteBool(true)
+            net.SendToServer()
+        end
 
         if self.Round.FirstSelect then
             self.Round.FirstSelect = false
