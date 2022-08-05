@@ -316,7 +316,7 @@ function Damagelog:DrawDamageTab(x, y)
     self.Round.OnSelect = function(_, value, index, data)
         self.SelectedRound = data
         
-        if GetConVar("ttt_dmglogs_shotlogsondamagetab"):GetBool() then
+        if GetConVar("ttt_dmglogs_shotlogsondamagetab"):GetBool() and self.SelectedRound ~= nil then
             net.Start("DL_AskOldLog")
                 net.WriteUInt(data, 32)
                 net.WriteBool(true)
