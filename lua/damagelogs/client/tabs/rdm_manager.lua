@@ -160,10 +160,10 @@ local function TakeAction()
         for _, v in pairs(report.logs.logs or {}) do
             if v.id and Damagelog.events[v.id].Type == "KILL" then
                 local infos = v.infos
-                local ent = Damagelog:InfoFromID(roles, infos[1])
-                local att = Damagelog:InfoFromID(roles, infos[2])
+                local att = Damagelog:InfoFromID(roles, infos[1])
+                local ent = Damagelog:InfoFromID(roles, infos[2])
 
-                if ent.steamid64 == attackerID and att.steamid64 == victimID then
+                if ent.steamid64 == victimID and att.steamid64 == attackerID then
                     net.Start("DL_AskDeathScene")
                     net.WriteUInt(infos[4], 32)
                     net.WriteUInt(infos[2], 32)
