@@ -84,7 +84,7 @@ function Damagelog:DrawDamageTab(x, y)
         
         net.Start("DL_AskDamagelog")
         net.WriteInt(self.SelectedRound, 32)
-        net.SendToServer()    
+        net.SendToServer()
     end
 
     self.DamageTab = vgui.Create("DListLayout")
