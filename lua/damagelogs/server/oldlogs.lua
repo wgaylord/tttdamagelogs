@@ -7,7 +7,6 @@ util.AddNetworkString("DL_SendOldLogRounds")
 Damagelog.previous_reports = {}
 local limit = os.time() - Damagelog.LogDays * 86400 --  24 * 60 * 60
 
-
 if Damagelog.Use_MySQL then
     require("mysqloo")
     include("damagelogs/config/mysqloo.lua")
@@ -272,7 +271,30 @@ net.Receive("DL_AskOldLog", function(_, ply)
     if IsValid(ply) and ply:IsPlayer() and (not ply.lastLogs or (CurTime() - ply.lastLogs) > 2) then
         local _time = net.ReadUInt(32)
 
+        if IsValid(ply) and ply:IsPlayer() then
+        local _time = net.ReadUInt(32)
+        local isDamageTab = net.ReadBool()
+
         if Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
+        if not isDamageTab and CurTime() - ply.lastLogs or 0 > 2 then return end
+
+        if isDamageTab then
+            local data, roles
+
+            if round == -1 then
+                data = Damagelog.PreviousMap.ShootTable
+                roles = Damagelog.PreviousMap.Roles
+            else
+                data = Damagelog.ShootTables[_time]
+                roles = Damagelog.Roles[_time]
+            end
+
+            if not roles or not data then return end
+
+            local payload = util.Compress(util.TableToJSON({ShootTable = data, Roles = roles }))
+
+            SendLogs(ply, payload, false)
+        elseif Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
             local query = Damagelog.database:query("SELECT UNCOMPRESS(damagelog) FROM damagelog_oldlogs_v3 WHERE date = " .. _time .. ";")
 
             query.onSuccess = function(self)
