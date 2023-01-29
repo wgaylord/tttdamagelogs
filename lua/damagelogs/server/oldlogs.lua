@@ -271,7 +271,6 @@ net.Receive("DL_AskOldLog", function(_, ply)
     if IsValid(ply) and ply:IsPlayer() and (not ply.lastLogs or (CurTime() - ply.lastLogs) > 2) then
         local _time = net.ReadUInt(32)
 
-        if IsValid(ply) and ply:IsPlayer() then
         local _time = net.ReadUInt(32)
         local isDamageTab = net.ReadBool()
 
