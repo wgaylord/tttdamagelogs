@@ -260,7 +260,8 @@ function Damagelog:DrawOldLogs()
             end
 
             net.Start("DL_AskOldLog")
-            net.WriteUInt(self.RoundChoice:GetSelected()[1].time, 32)
+                net.WriteUInt(self.RoundChoice:GetSelected()[1].time, 32)
+                net.WriteBool(false)
             net.SendToServer()
             panel.MoveTop = true
         end

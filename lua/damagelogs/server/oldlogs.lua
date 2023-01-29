@@ -270,12 +270,9 @@ end)
 net.Receive("DL_AskOldLog", function(_, ply)
     if IsValid(ply) and ply:IsPlayer() and (not ply.lastLogs or (CurTime() - ply.lastLogs) > 2) then
         local _time = net.ReadUInt(32)
-
-        local _time = net.ReadUInt(32)
         local isDamageTab = net.ReadBool()
 
-        if Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
-        if not isDamageTab and CurTime() - ply.lastLogs or 0 > 2 then return end
+        ply.lastLogs = CurTime()
 
         if isDamageTab then
             local data, roles
@@ -293,7 +290,11 @@ net.Receive("DL_AskOldLog", function(_, ply)
             local payload = util.Compress(util.TableToJSON({ShootTable = data, Roles = roles }))
 
             SendLogs(ply, payload, false)
-        elseif Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
+            return
+        end
+
+
+        if Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
             local query = Damagelog.database:query("SELECT UNCOMPRESS(damagelog) FROM damagelog_oldlogs_v3 WHERE date = " .. _time .. ";")
 
             query.onSuccess = function(self)
@@ -319,6 +320,4 @@ net.Receive("DL_AskOldLog", function(_, ply)
             end
         end
     end
-
-    ply.lastLogs = CurTime()
 end)
