@@ -228,25 +228,27 @@ local function TakeAction()
                 frame:SetPlayer(false, victim, report.victim, report)
             end):SetImage("icon16/user.png")
 
-            slaynr_pnl2 = vgui.Create("DMenuOption", menuPanel)
-            slaynr2 = DermaMenu(menuPanel)
-            slaynr2:SetVisible(false)
-            slaynr_pnl2:SetSubMenu(slaynr2)
-            slaynr_pnl2:SetText("Ban")
-            slaynr_pnl2:SetImage("icon16/bomb.png")
-            menuPanel:AddPanel(slaynr_pnl2)
+            if Damagelog.AllowBanningThruManager then
+                slaynr_pnl2 = vgui.Create("DMenuOption", menuPanel)
+                slaynr2 = DermaMenu(menuPanel)
+                slaynr2:SetVisible(false)
+                slaynr_pnl2:SetSubMenu(slaynr2)
+                slaynr_pnl2:SetText("Ban")
+                slaynr_pnl2:SetImage("icon16/bomb.png")
+                menuPanel:AddPanel(slaynr_pnl2)
 
-            slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "ReportedPlayer") .. " (" .. report.attacker_nick .. ")", function()
-                local frame = vgui.Create("RDM_Manager_Ban_Reason", Damagelog.Menu)
-                frame.SetConclusion = SetConclusionBan
-                frame:SetPlayer(true, attacker, report.attacker, report)
-            end):SetImage("icon16/user_delete.png")
+                slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "ReportedPlayer") .. " (" .. report.attacker_nick .. ")", function()
+                    local frame = vgui.Create("RDM_Manager_Ban_Reason", Damagelog.Menu)
+                    frame.SetConclusion = SetConclusionBan
+                    frame:SetPlayer(true, attacker, report.attacker, report)
+                end):SetImage("icon16/user_delete.png")
 
-            slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "Victim") .. " (" .. report.victim_nick .. ")", function()
-                local frame = vgui.Create("RDM_Manager_Ban_Reason", Damagelog.Menu)
-                frame.SetConclusion = SetConclusionBan
-                frame:SetPlayer(false, victim, report.victim, report)
-            end):SetImage("icon16/user.png")
+                slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "Victim") .. " (" .. report.victim_nick .. ")", function()
+                    local frame = vgui.Create("RDM_Manager_Ban_Reason", Damagelog.Menu)
+                    frame.SetConclusion = SetConclusionBan
+                    frame:SetPlayer(false, victim, report.victim, report)
+                end):SetImage("icon16/user.png")
+            end
         end
 
         menuPanel:AddOption(TTTLogTranslate(GetDMGLogLang, "SlayReportedPlayerNow"), function()
@@ -1018,7 +1020,11 @@ function PANEL:Init()
     self.Reason:SetText(TTTLogTranslate(GetDMGLogLang, "Reason"))
     self.CREnable = vgui.Create("DCheckBox", self)
     self.CREnable:SetPos(self.Distance / 2 + self.Dimension / 2, self.Dimension * 2 / 3 + 5)
-    self.CREnable:SetValue(0)
+    if Damagelog.Autoslay_CheckCustom then
+        self.CREnable:SetValue(1)
+    else
+        self.CREnable:SetValue(0)
+    end    
 
     function self.CREnable.OnChange(panel, reasonTxt)
         self:UpdateReason()
