@@ -231,7 +231,7 @@ function Damagelog:DrawOldLogs()
 
             for _, v in ipairs(selected.rounds) do
                 if v.date ~= lunix then
-                    local formatdate = (string.sub(tostring(os.date("%I:%M", v.date)), 1, 1) == "0" and string.sub(tostring(os.date("%I:%M", v.date)), 2, 5) or (tostring(os.date("%I:%M", v.date))))
+                    local formatdate = (string.sub(tostring(os.date("%H:%M", v.date)), 1, 1) == "0" and string.sub(tostring(os.date("%H:%M", v.date)), 2, 5) or (tostring(os.date("%H:%M", v.date))))
                     local line = self.RoundChoice:AddLine(formatdate .. " : " .. v.map .. " | " .. TTTLogTranslate(GetDMGLogLang, "Round") .. ": " .. v.round)
                     line.time = v.date
                     lunix = v.date -- Hack way to stupid duplicate rounds
