@@ -13,12 +13,11 @@
 	Third argument: access to RDM Manager tab in Damagelogs (true/false).
 ]]
 --
-Damagelog:AddUser("owner", 4, true)
-Damagelog:AddUser("founder", 4, true)
 Damagelog:AddUser("superadmin", 4, true)
-Damagelog:AddUser("admin", 4, true)
-Damagelog:AddUser("operator", 3, false)
-Damagelog:AddUser("user", 2, false)
+Damagelog:AddUser("adm", 4, true)
+Damagelog:AddUser("moderator", 3, true)
+Damagelog:AddUser("dtmod", 3, true)
+Damagelog:AddUser("trusted", 3, true)
 
 -- The F-key
 Damagelog.Key = KEY_F8
@@ -54,7 +53,7 @@ Damagelog.ULX_AutoslayMode = 1
 -- Do not enable this if another addon interferes with roles (Pointshop roles for example)
 Damagelog.ULX_Autoslay_ForceRole = true
 --Auto check Custom slay Reason
-Damagelog.Autoslay_CheckCustom = false
+Damagelog.Autoslay_CheckCustom = true
 -- Default autoslay reasons (ULX, SAM, and ServerGuard)
 Damagelog.Autoslay_DefaultReason = "Breaking Rules"
 Damagelog.Autoslay_DefaultReason1 = "Random Damage"
@@ -100,7 +99,7 @@ Damagelog.ReportsBeforePlaying = false
 -- Private message prefix from RDM Manager
 Damagelog.PrivateMessagePrefix = "[RDM Manager]"
 -- Allow banning thru the RDMManager
-Damagelog.AllowBanningThruManager = true
+Damagelog.AllowBanningThruManager = false
 
 
 -- Discord Webhooks

@@ -272,54 +272,55 @@ net.Receive("DL_AskOldLog", function(_, ply)
         local _time = net.ReadUInt(32)
 
         if IsValid(ply) and ply:IsPlayer() then
-        local _time = net.ReadUInt(32)
-        local isDamageTab = net.ReadBool()
+            local _time = net.ReadUInt(32)
+            local isDamageTab = net.ReadBool()
 
-        if Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
-        if not isDamageTab and CurTime() - ply.lastLogs or 0 > 2 then return end
+            if Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
+            if not isDamageTab and CurTime() - ply.lastLogs or 0 > 2 then return end
 
-        if isDamageTab then
-            local data, roles
+            if isDamageTab then
+                local data, roles
 
-            if round == -1 then
-                data = Damagelog.PreviousMap.ShootTable
-                roles = Damagelog.PreviousMap.Roles
-            else
-                data = Damagelog.ShootTables[_time]
-                roles = Damagelog.Roles[_time]
-            end
+                if round == -1 then
+                    data = Damagelog.PreviousMap.ShootTable
+                    roles = Damagelog.PreviousMap.Roles
+                else
+                    data = Damagelog.ShootTables[_time]
+                    roles = Damagelog.Roles[_time]
+                end
 
-            if not roles or not data then return end
+                if not roles or not data then return end
 
-            local payload = util.Compress(util.TableToJSON({ShootTable = data, Roles = roles }))
+                local payload = util.Compress(util.TableToJSON({ShootTable = data, Roles = roles }))
 
-            SendLogs(ply, payload, false)
-        elseif Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
-            local query = Damagelog.database:query("SELECT UNCOMPRESS(damagelog) FROM damagelog_oldlogs_v3 WHERE date = " .. _time .. ";")
+                SendLogs(ply, payload, false)
+            elseif Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
+                local query = Damagelog.database:query("SELECT UNCOMPRESS(damagelog) FROM damagelog_oldlogs_v3 WHERE date = " .. _time .. ";")
 
-            query.onSuccess = function(self)
-                local data = self:getData()
+                query.onSuccess = function(self)
+                    local data = self:getData()
 
-                if data[1] and data[1]["UNCOMPRESS(damagelog)"] then
-                    local compressed = util.Compress(data[1]["UNCOMPRESS(damagelog)"])
-                    SendLogs(ply, compressed, false)
+                    if data[1] and data[1]["UNCOMPRESS(damagelog)"] then
+                        local compressed = util.Compress(data[1]["UNCOMPRESS(damagelog)"])
+                        SendLogs(ply, compressed, false)
+                    else
+                        SendLogs(ply, nil, true)
+                    end
+
+                end
+
+                query:start()
+            elseif not Damagelog.Use_MySQL then
+                local query = Damagelog.SQLiteDatabase.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. _time)
+
+                if query then
+                    SendLogs(ply, util.Compress(query), false)
                 else
                     SendLogs(ply, nil, true)
                 end
-
-            end
-
-            query:start()
-        elseif not Damagelog.Use_MySQL then
-            local query = Damagelog.SQLiteDatabase.QueryValue("SELECT damagelog FROM damagelog_oldlogs_v3 WHERE date = " .. _time)
-
-            if query then
-                SendLogs(ply, util.Compress(query), false)
-            else
-                SendLogs(ply, nil, true)
             end
         end
+        end
     end
-
     ply.lastLogs = CurTime()
 end)

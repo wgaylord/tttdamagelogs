@@ -92,6 +92,19 @@ timer.Create("SpecDM_Recording", 0.2, 0, function()
             })
         end
     end
+    for _,class in ipairs(Damagelog.AttackingEntities) do
+        for _,v in pairs(ents.FindByClass(class)) do
+            if IsValid(v) then
+                table.insert(tbl, v:EntIndex(), {
+                prop = true,
+                model = v:GetModel(),
+                pos = v:GetPos(),
+                ang = v:GetAngles()
+            })
+            end
+        end
+    end
+
 
     table.insert(Damagelog.Records, tbl)
 end)
