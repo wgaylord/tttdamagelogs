@@ -234,7 +234,7 @@ net.Receive("DL_AskOldLogRounds", function(_, ply)
     local _date = "20" .. year .. "-" .. month .. "-" .. day -- TODO: not the best way if someone uses this in 2100 too ;)
 
     if Damagelog.Use_MySQL and Damagelog.MySQL_Connected then
-        local query_str = "SELECT date,map,round FROM damagelog_oldlogs_v3 WHERE year = ".. year .. "AND month = " .. month .. "AND day = " .. day .." ORDER BY date ASC;"
+        local query_str = "SELECT date,map,round FROM damagelog_oldlogs_v3 WHERE year = ".. year .. " AND month = " .. month .. " AND day = " .. day .." ORDER BY date ASC;"
         local query = Damagelog.database:query(query_str)
 
         query.onSuccess = function(self)
@@ -252,7 +252,7 @@ net.Receive("DL_AskOldLogRounds", function(_, ply)
 
         query:start()
     else
-        local query_str = "SELECT date,map,round FROM damagelog_oldlogs_v3 WHERE  year = ".. year .. "AND month = " .. month .. "AND day = " .. day .."  ORDER BY date ASC;"
+        local query_str = "SELECT date,map,round FROM damagelog_oldlogs_v3 WHERE  year = ".. year .. " AND month = " .. month .. " AND day = " .. day .."  ORDER BY date ASC;"
         local result = Damagelog.SQLiteDatabase.Query(query_str)
 
         if not result then
