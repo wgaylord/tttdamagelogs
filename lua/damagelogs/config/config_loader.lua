@@ -188,7 +188,7 @@ function Damagelog:loadConfig() --Returns 0 on good load, returns -1 on failure 
         if config.Ban.AllowBanningThruManager != nil then
             Damagelog.AllowBanningThruManager = config.Ban.AllowBanningThruManager
         else missing = 1 end
-        print(config.Ban.DefaultReason1)
+
         if config.Ban.DefaultReason1 != nil then
             Damagelog.Ban_DefaultReason1 = config.Ban.DefaultReason1
         else missing = 1 end
