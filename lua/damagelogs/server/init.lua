@@ -21,6 +21,11 @@ AddCSLuaFile("damagelogs/shared/autoslay.lua")
 include("damagelogs/shared/defines.lua")
 include("damagelogs/config/config.lua")
 include("damagelogs/config/mysqloo.lua")
+include("damagelogs/config/config_loader.lua")
+--Grab the configs as soon as possible since other code depends on it.
+Damagelog:loadMySQLConfig()
+Damagelog:loadConfig()
+
 include("damagelogs/server/sqlite.lua")
 include("damagelogs/shared/lang.lua")
 include("damagelogs/server/oldlogs.lua")

@@ -13,12 +13,13 @@
 	Third argument: access to RDM Manager tab in Damagelogs (true/false).
 ]]
 --
+Damagelog:AddUser("superadmin", 4, true)
 Damagelog:AddUser("owner", 4, true)
 Damagelog:AddUser("founder", 4, true)
-Damagelog:AddUser("superadmin", 4, true)
 Damagelog:AddUser("admin", 4, true)
 Damagelog:AddUser("operator", 3, false)
 Damagelog:AddUser("user", 2, false)
+
 
 -- The F-key
 Damagelog.Key = KEY_F8
@@ -123,3 +124,4 @@ Damagelog.DiscordWebhookMode = 0
 -- Should all players get notified about the amount of remaining slays of a slain player?
 
 Damagelog.ShowRemainingSlays = false
+
