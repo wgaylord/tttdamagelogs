@@ -6,6 +6,7 @@ local current_scene
 local roles
 local models = {}
 local props = {}
+local extra_entities = {}
 local last_curtime
 local victim
 local attacker
@@ -375,6 +376,18 @@ hook.Add("RenderScreenspaceEffects", "DeathScene_Damagelog", function()
             end
         end
 
+        for _, v in pairs(extra_entities) do
+            if IsValid(v) then
+                render.SuppressEngineLighting(true)
+                render.SetColorModulation(0.8, 0, 0.5)
+                cam.IgnoreZ(true)
+                v:DrawModel()
+                render.SetColorModulation(1, 1, 1)
+                cam.IgnoreZ(false)
+                render.SuppressEngineLighting(false)
+            end
+        end
+
         cam.End3D()
     end
 end)
@@ -512,6 +525,12 @@ hook.Add("Think", "Think_Record", function()
                     props[k] = nil
                 end
             end
+            for k, v in pairs(extra_entities) do
+                if not scene[k] then
+                    v:Remove()
+                    extra_entities[k] = nil
+                end
+            end
         else
             if not paused and Damagelog.DS_Play.Icon:GetImage() == "icon16/control_pause_blue.png" then
                 Damagelog.DS_Play:DoClick()
@@ -548,6 +567,22 @@ hook.Add("Think", "Think_Record", function()
 
                 props[k]:SetPos(vector)
                 props[k]:SetAngles(angle)
+            elseif v.extra then
+                if not extra_entities[k] then
+                    extra_entities[k] = ClientsideModel(v.model or "", RENDERGROUP_TRANSLUCENT)
+                end
+
+                local vector = v.pos
+                local angle = v.ang
+
+                if next_scene and next_scene[k] then
+                    local percent = math.ceil(i) - i
+                    vector = LerpVector(percent, next_scene[k].pos, v.pos)
+                    angle = LerpAngle(percent, next_scene[k].ang, v.ang)
+                end
+
+                extra_entities[k]:SetPos(vector)
+                extra_entities[k]:SetAngles(angle)
             else
                 if models[k] and v.corpse and not models[k].corpse then
                     if IsValid(models[k]) then

@@ -21,6 +21,7 @@ AddCSLuaFile("damagelogs/shared/autoslay.lua")
 include("damagelogs/shared/defines.lua")
 include("damagelogs/config/config.lua")
 include("damagelogs/config/mysqloo.lua")
+include("damagelogs/config/load_config.lua")
 include("damagelogs/server/sqlite.lua")
 include("damagelogs/shared/lang.lua")
 include("damagelogs/server/oldlogs.lua")
@@ -33,6 +34,7 @@ include("damagelogs/server/recording.lua")
 include("damagelogs/server/autoslay.lua")
 include("damagelogs/shared/autoslay.lua")
 include("damagelogs/server/discord.lua")
+
 
 -- Building error reporting
 -- Damagelog:Error(debug.getinfo(1).source, debug.getinfo(1).currentline, "connection error")
@@ -72,6 +74,10 @@ Damagelog.OldTables = Damagelog.OldTables or {}
 Damagelog.ShootTables = Damagelog.ShootTables or {}
 Damagelog.Roles = Damagelog.Roles or {}
 Damagelog.SceneRounds = Damagelog.SceneRounds or {}
+Damagelog.ExtraDeathSceneEntities = Damagelog.ExtraDeathSceneEntities or {}
+
+
+Damagelog:loadExtraEntityList()
 
 net.Receive("DL_SendLang", function(_, ply)
     ply.DMGLogLang = net.ReadString()

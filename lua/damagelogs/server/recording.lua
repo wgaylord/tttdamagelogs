@@ -2,6 +2,7 @@ util.AddNetworkString("DL_AskDeathScene")
 util.AddNetworkString("DL_SendDeathScene")
 Damagelog.Records = Damagelog.Records or {}
 Damagelog.Death_Scenes = Damagelog.Death_Scenes or {}
+Damagelog.ExtraDeathSceneEntities = Damagelog.ExtraDeathSceneEntities or {}
 Damagelog.SceneID = Damagelog.SceneID or 0
 local magneto_ents = {}
 local table = table
@@ -90,6 +91,19 @@ timer.Create("SpecDM_Recording", 0.2, 0, function()
                 pos = v.ent:GetPos(),
                 ang = v.ent:GetAngles()
             })
+        end
+    end
+
+    for _,class in ipairs(Damagelog.ExtraDeathSceneEntities) do
+        for _,v in pairs(ents.FindByClass(class)) do
+            if IsValid(v) then
+                table.insert(tbl, v:EntIndex(), {
+                extra = true,
+                model = v:GetModel(),
+                pos = v:GetPos(),
+                ang = v:GetAngles()
+            })
+            end
         end
     end
 
