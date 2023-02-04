@@ -689,8 +689,15 @@ function Damagelog:StopRecording()
         end
     end
 
+    for _,v in pairs(extra_entities) do
+        if IsValid(x) then
+            v:Remove()
+        end
+    end
+    
     table.Empty(models)
     table.Empty(props)
+    table.Empty(extra_entities)
     current_scene = nil
     i = 1
     playedsounds = {}
