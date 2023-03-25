@@ -408,9 +408,9 @@ DamagelogLang.russian = {
     webhook_header_report_forgiven = "Жалоба отменена (ID %s)",
     webhook_header_report_kept = "Жалоба не отменена (ID %s)",
     webhook_header_report_finished = "Жалоба рассмотрена (ID %s)",
-	-- 03-26-2023
-	rdmmanager_action_ban = "Заблокировать",
-	rdmmanager_action_ban_title = "Блокировка",
-	rdmmanager_action_ban_submit = "Заблокировать",
-	dmglogs_btn_highlight = "Выделить"
+    -- 03-26-2023
+    rdmmanager_action_ban = "Заблокировать",
+    rdmmanager_action_ban_title = "Блокировка",
+    rdmmanager_action_ban_submit = "Заблокировать",
+    dmglogs_btn_highlight = "Выделить"
 }
