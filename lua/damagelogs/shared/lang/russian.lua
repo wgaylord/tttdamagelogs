@@ -1,5 +1,5 @@
 DamagelogLang.russian = {
-    DefaultReason = "Нарушение правил сервера!",
+    DefaultReason = "Причина не указана",
     -- Damage types
     DMG_BLAST = "взрыв",
     DMG_BURN = "огонь",
