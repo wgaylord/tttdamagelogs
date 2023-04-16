@@ -24,9 +24,9 @@ include("damagelogs/config/mysqloo.lua")
 include("damagelogs/config/config_loader.lua")
 --Grab the configs as soon as possible since other code depends on it.
 Damagelog:loadMySQLConfig()
-if Damagelog:loadConfig() == 1 then
-    Damagelog:saveConfig()
-end
+Damagelog:loadConfig()
+Damagelog:saveConfig()
+
 
 include("damagelogs/server/sqlite.lua")
 include("damagelogs/shared/lang.lua")
