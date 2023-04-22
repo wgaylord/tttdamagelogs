@@ -1,3 +1,7 @@
+-- See this wiki page on how to edit the addon's configuration
+-- https://github.com/BadgerCode/tttdamagelogs/wiki/Configuring-the-damage-logs
+
+
 --[[
 When adding new configuration options:
 1. Add it to this file
