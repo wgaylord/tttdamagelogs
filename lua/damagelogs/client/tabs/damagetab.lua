@@ -207,7 +207,7 @@ function Damagelog:DrawDamageTab(x, y)
     self.Highlight = vgui.Create("DButton", self.PlayerSelect)
     self.Highlight:SetPos(500, 30)
     self.Highlight:SetSize(80, 20)
-    self.Highlight:SetText("Highlight")
+    self.Highlight:SetText(TTTLogTranslate(GetDMGLogLang, "dmglogs_btn_highlight"))
 
     self.Highlight.DoClick = function(self)
         local nick, selected = Damagelog.PlayersCombo:GetSelected()

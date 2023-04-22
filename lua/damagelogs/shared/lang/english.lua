@@ -406,5 +406,10 @@ DamagelogLang.english = {
     webhook_header_report_submitted = "Report Submitted (ID %s)",
     webhook_header_report_forgiven = "Report Forgiven (ID %s)",
     webhook_header_report_kept = "Report Kept (ID %s)",
-    webhook_header_report_finished = "Report Finished (ID %s)"
+    webhook_header_report_finished = "Report Finished (ID %s)",
+    -- 03-26-2023
+    rdmmanager_action_ban = "Ban",
+    rdmmanager_action_ban_title = "Banning",
+    rdmmanager_action_ban_submit = "Ban",
+    dmglogs_btn_highlight = "Highlight"
 }
