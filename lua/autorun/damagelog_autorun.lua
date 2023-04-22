@@ -1,6 +1,6 @@
 -- if engine.ActiveGamemode() == 'terrortown' then
 Damagelog = Damagelog or {}
-Damagelog.VERSION = "3.5.2"
+Damagelog.VERSION = "3.6.0"
 
 if not file.Exists("damagelog", "DATA") then
     file.CreateDir("damagelog")
