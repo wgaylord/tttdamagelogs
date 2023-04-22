@@ -1,3 +1,17 @@
+--[[
+When adding new configuration options:
+1. Add it to lua\damagelogs\config\config.lua
+Damagelog.MyNewProperty = "hello"
+
+2. Add it to this file
+In Damagelog:getConfig
+config.MyNewProperty = DamageLog.MyNewProperty
+
+In Damagelog:loadConfig
+DamageLog.MyNewProperty = config.MyNewProperty
+
+]]
+
 
 function Damagelog:getConfig()
     local config = {}

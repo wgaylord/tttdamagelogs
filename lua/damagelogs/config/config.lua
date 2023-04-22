@@ -1,3 +1,18 @@
+--[[
+When adding new configuration options:
+1. Add it to this file
+Damagelog.MyNewProperty = "hello"
+
+2. Add it to lua\damagelogs\config\config_loader.lua
+In Damagelog:getConfig
+config.MyNewProperty = DamageLog.MyNewProperty
+
+In Damagelog:loadConfig
+DamageLog.MyNewProperty = config.MyNewProperty
+
+]]
+
+
 --[[User rights.
 
 	First argument: name of usergroup (e. g. "user" or "admin").
