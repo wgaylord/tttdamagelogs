@@ -11,8 +11,8 @@ local function UpdateWeaponNames()
     table.Add(entsList, scripted_ents.GetList())
 
     for _, v in pairs(entsList) do
-        local printName = v.PrintName
-        local class = v.ClassName
+        local printName = v.PrintName or v.t and v.t.PrintName
+        local class = v.ClassName or v.t and v.t.ClassName
 
         if class and printName then
             local translated = LANG.TryTranslation(printName)
