@@ -60,7 +60,7 @@ If you have a question, issue or feature request, please raise an issue in the [
 3. Extract the zip to a folder called `tttdamagelogs`
     * Make sure the folder name is all lowercase
 4. Copy this folder into your server's addons folder
-5. Configure the addon via the configuration lua file - `lua/config/config.lua`
+5. [Configure the addon](https://github.com/BadgerCode/tttdamagelogs/wiki/Configuring-the-damage-logs)
 
 ### Example
 
@@ -69,7 +69,7 @@ If you have a question, issue or feature request, please raise an issue in the [
 * The server's folder is `gmod-test-server`
 * The server's addon folder is `gmod-test-server/garrysmod/addons`
 * The damage logs addon folder is `gmod-test-server/garrysmod/addons/tttdamagelogs`
-* The config file can be found at `gmod-test-server/garrysmod/addons/tttdamagelogs/lua/config/config.lua`
+* The config file can be found at `gmod-test-server/garrysmod/data/damagelog/config.json`
 
 <br>
 
