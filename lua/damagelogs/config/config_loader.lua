@@ -127,7 +127,7 @@ function Damagelog:loadConfig() --Returns 0 on good load, returns -1 on failure 
 
     Damagelog.ULX_AutoslayMode = config.Autoslay.ULX_AutoslayMode
     Damagelog.ULX_Autoslay_ForceRole = config.Autoslay.ULX_Autoslay_ForceRole
-    Damagelog.ULX_Autoslay_ForceRole = config.Autoslay.Autoslay_CheckCustom
+    Damagelog.Autoslay_CheckCustom = config.Autoslay.Autoslay_CheckCustom
 
     Damagelog.Autoslay_DefaultReason = config.Autoslay.DefaultReason
     Damagelog.Autoslay_DefaultReason1 = config.Autoslay.DefaultReason1
