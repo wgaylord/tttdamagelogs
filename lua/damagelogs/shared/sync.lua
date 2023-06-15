@@ -14,6 +14,7 @@ local ENT = {
     Draw = function() end,
     Initialize = function(self)
         self:DrawShadow(false)
+        self:AddEFlags(EFL_KEEP_ON_RECREATE_ENTITIES)
     end
 }
 
@@ -27,18 +28,6 @@ function Damagelog:GetSyncEnt()
     else
         return ents.FindByClass("dmglog_sync_ent")[1]
     end
-end
-
--- TTT cleans up all entities
--- fuck it
-local CleanUpMap = game.CleanUpMap
-
-function game.CleanUpMap(send_to_clients, filters)
-    filters = filters or {}
-    table.insert(filters, "dmglog_sync_ent")
-    local res = CleanUpMap(send_to_clients, filters)
-
-    return res
 end
 
 if SERVER then
