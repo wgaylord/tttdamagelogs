@@ -60,9 +60,9 @@ Damagelog.Respond_Command = "!respond"
 --
 Damagelog.Use_MySQL = false
 --[[Autoslay and Autojail Mode
-REQUIRES ULX/SAM ! If you are using ServerGuard, set this to 0 (it will use ServerGuard's autoslay automatically)
+REQUIRES ULX/SAM/sAdmin ! If you are using ServerGuard, set this to 0 (it will use ServerGuard's autoslay automatically)
 - 0 : Disables autoslay
-- 1 : Enables the !aslay and !aslayid command for ULX, designed to work with the logs.
+- 1 : Enables the !aslay and !aslayid command for ULX/SAM/SADMIN, designed to work with the logs.
 	  Works like that : !aslay target number_of_slays reason
 	  Example : !aslay tommy228 2 RDMing a traitor
 	  Example : !aslayid STEAM_0:0:1234567 2 RDMing a traitor
@@ -70,12 +70,12 @@ REQUIRES ULX/SAM ! If you are using ServerGuard, set this to 0 (it will use Serv
 ]]
 --
 Damagelog.ULX_AutoslayMode = 1
--- Force autoslain players to be innocents (ULX/SAM only)
+-- Force autoslain players to be innocents (ULX/SAM/SADMIN only)
 -- Do not enable this if another addon interferes with roles (Pointshop roles for example)
 Damagelog.ULX_Autoslay_ForceRole = true
 --Auto check Custom slay Reason
 Damagelog.Autoslay_CheckCustom = false
--- Default autoslay reasons (ULX, SAM, and ServerGuard)
+-- Default autoslay reasons (ULX, SAM, sAdmin, and ServerGuard)
 Damagelog.Autoslay_DefaultReason = "Breaking Rules"
 Damagelog.Autoslay_DefaultReason1 = "Random Damage"
 Damagelog.Autoslay_DefaultReason2 = "RDM"
@@ -143,4 +143,3 @@ Damagelog.DiscordWebhookMode = 0
 -- Should all players get notified about the amount of remaining slays of a slain player?
 
 Damagelog.ShowRemainingSlays = false
-
