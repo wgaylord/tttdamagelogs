@@ -1349,10 +1349,10 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
             elseif sam then
                 RunConsoleCommand("sam", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(self.BanTimeNumber), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
-			elseif sAdmin then
-				local timeInSeconds = self.BanTimeNumber * 60
-				RunConsoleCommand("sa", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(timeInSeconds), self.CurrentReason)
-				self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
+	    elseif sAdmin then
+		local timeInSeconds = self.BanTimeNumber * 60
+		RunConsoleCommand("sa", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(timeInSeconds), self.CurrentReason)
+		self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
             else
                 Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
             end
