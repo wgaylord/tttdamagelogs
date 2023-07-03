@@ -1335,7 +1335,7 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
             elseif sam then
                 RunConsoleCommand("sam", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
             elseif sAdmin then
-				local timeInSeconds = self.BanTimeNumber * 60
+		local timeInSeconds = self.BanTimeNumber * 60
                 RunConsoleCommand("sa", "ban", ply:Nick(), tostring(timeInSeconds), self.CurrentReason) -- Fix it (time is specified in seconds)
             elseif serverguard then
                 serverguard.command.Run("ban", false, ply:Nick(), self.BanTimeNumber, self.CurrentReason)
