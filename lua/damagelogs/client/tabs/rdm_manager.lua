@@ -181,8 +181,8 @@ local function TakeAction()
         end
     end):SetImage("icon16/television.png")
 
-    if serverguard or sam or ulx then
-        if serverguard or sam or (ulx and (mode == 1 or mode == 2)) then
+    if serverguard or sam or sAdmin or ulx then
+        if serverguard or sam or sAdmin or (ulx and (mode == 1 or mode == 2)) then
             local function SetConclusion(ply, num, reason)
                 net.Start("DL_Conclusion")
                 net.WriteUInt(1, 1)
@@ -257,6 +257,8 @@ local function TakeAction()
                     RunConsoleCommand("ulx", "slay", attacker:Nick())
                 elseif sam then
                     RunConsoleCommand("sam", "slay", attacker:Nick())
+                elseif sAdmin then
+                	RunConsoleCommand("sa", "slay", attacker:Nick())
                 elseif serverguard then
                     serverguard.command.Run("slay", false, ply:Nick())
                 end
@@ -280,6 +282,8 @@ local function TakeAction()
                         RunConsoleCommand("ulx", "psay", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     elseif sam then
                         RunConsoleCommand("sam", "pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+                    elseif sAdmin then
+                    	RunConsoleCommand("sa", "pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     elseif serverguard then
                         serverguard.command.Run("pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     end
@@ -296,6 +300,8 @@ local function TakeAction()
                         RunConsoleCommand("ulx", "psay", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     elseif sam then
                         RunConsoleCommand("sam", "pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+                    elseif sAdmin then
+                        RunConsoleCommand("sa", "pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     elseif serverguard then
                         serverguard.command.Run("pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     end
@@ -313,7 +319,7 @@ local function TakeAction()
 
         if ulx and mode == 2 then
             txt = TTTLogTranslate(GetDMGLogLang, "RemoveAutoJails")
-        elseif sam or serverguard then
+        elseif sam or sAdmin or serverguard then
             txt = TTTLogTranslate(GetDMGLogLang, "RemoveOneAutoSlay")
         end
 
@@ -327,6 +333,8 @@ local function TakeAction()
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                elseif sAdmin then
+                    RunConsoleCommand("sa", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif serverguard then
                     serverguard.command.Run("raslay", false, attacker:Nick())
                 end
@@ -335,6 +343,8 @@ local function TakeAction()
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
+                elseif sAdmin then
+                    RunConsoleCommand("sa", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 else
                     Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
                 end
@@ -347,6 +357,8 @@ local function TakeAction()
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
+                elseif sAdmin then
+                    RunConsoleCommand("sa", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif serverguard then
                     serverguard.command.Run("raslay", false, victim:Nick())
                 end
@@ -355,6 +367,8 @@ local function TakeAction()
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
+                elseif sAdmin then
+                    RunConsoleCommand("sa", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 else
                     Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
                 end
@@ -1073,6 +1087,8 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
                 RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
             elseif sam then
                 RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
+            elseif sAdmin then
+                RunConsoleCommand("sa", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
             elseif serverguard then
                 serverguard.command.Run("aslay", false, ply:Nick(), self.NumSlays, self.CurrentReason)
             end
@@ -1084,6 +1100,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.NumSlays, self.CurrentReason)
             elseif sam then
                 RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", (reported and report.attacker) or (not reported and report.victim), tostring(self.NumSlays), self.CurrentReason)
+                self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.NumSlays, self.CurrentReason)
+            elseif sAdmin then
+                RunConsoleCommand("sa", mode == 1 and "aslayid" or "ajailid", (reported and report.attacker) or (not reported and report.victim), tostring(self.NumSlays), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.NumSlays, self.CurrentReason)
             else
                 Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
@@ -1315,6 +1334,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
                 RunConsoleCommand("ulx", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
             elseif sam then
                 RunConsoleCommand("sam", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
+            elseif sAdmin then
+				local timeInSeconds = self.BanTimeNumber * 60
+                RunConsoleCommand("sa", "ban", ply:Nick(), tostring(timeInSeconds), self.CurrentReason) -- Fix it (time is specified in seconds)
             elseif serverguard then
                 serverguard.command.Run("ban", false, ply:Nick(), self.BanTimeNumber, self.CurrentReason)
             end
@@ -1327,6 +1349,10 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
             elseif sam then
                 RunConsoleCommand("sam", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(self.BanTimeNumber), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
+			elseif sAdmin then
+				local timeInSeconds = self.BanTimeNumber * 60
+				RunConsoleCommand("sa", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(timeInSeconds), self.CurrentReason)
+				self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
             else
                 Damagelog:Notify(DAMAGELOG_NOTIFY_ALERT, TTTLogTranslate(GetDMGLogLang, "VictimReportedDisconnected"), 2, "buttons/weapon_cant_buy.wav")
             end
