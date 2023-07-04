@@ -424,7 +424,7 @@ local function CreateCommand()
 
 				for k, target in ipairs(targets) do
 					if target and target:IsPlayer() then
-						sAdmin.cslay(admin, target) -- fixed here
+						sAdmin.cslay(admin, target)
 					end
 				end
 			end
@@ -437,7 +437,7 @@ local function CreateCommand()
 			func = function(admin, args, silent)
 				local steamid = args[1]
 				if not steamid then return end
-				sAdmin.cslayid(admin, steamid) -- fixed here
+				sAdmin.cslayid(admin, steamid)
 			end
 		})
     end
