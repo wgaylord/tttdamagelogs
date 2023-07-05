@@ -375,26 +375,19 @@ if CLIENT then
             table.insert(walls, net.ReadEntity())
         end
 
-        for _, v in pairs(walls) do
+        for _, v in ipairs(walls) do
             table.insert(jails, v)
         end
     end)
 
     local function CheckWalls()
-        local found = false
-
         for k, v in ipairs(jails) do
             if IsValid(v) then
                 v:SetCustomCollisionCheck(true)
                 v.jailWall = true
                 table.remove(jails, k)
-                found = true
-                break
+                continue
             end
-        end
-
-        if found then
-            CheckWalls()
         end
     end
 
