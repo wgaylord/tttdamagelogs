@@ -363,6 +363,8 @@ if CLIENT then
         chat.AddText(Color(255, 62, 62), nick .. "(" .. steamid .. ") has disconnected with " .. slays .. auto .. (slays > 1 and "s" or "") .. " left!")
     end)
 
+    if aslay then return end
+
     local jails = {}
 
     net.Receive("DL_SendJails", function()
@@ -396,7 +398,5 @@ if CLIENT then
         end
     end
 
-    hook.Add("Think", "JailWalls", function()
-        CheckWalls()
-    end)
+    hook.Add("Think", "JailWalls", CheckWalls)
 end
