@@ -363,7 +363,7 @@ if CLIENT then
         chat.AddText(Color(255, 62, 62), nick .. "(" .. steamid .. ") has disconnected with " .. slays .. auto .. (slays > 1 and "s" or "") .. " left!")
     end)
 
-    local ents = {}
+    local jails = {}
 
     net.Receive("DL_SendJails", function()
         local count = net.ReadUInt(32)
@@ -374,29 +374,29 @@ if CLIENT then
         end
 
         for _, v in pairs(walls) do
-            table.insert(ents, v)
+            table.insert(jails, v)
         end
     end)
 
-    hook.Add("Think", "JailWalls", function()
-        local function CheckWalls()
-            local found = false
+    local function CheckWalls()
+        local found = false
 
-            for k, v in pairs(ents) do
-                if IsValid(v) then
-                    v:SetCustomCollisionCheck(true)
-                    v.jailWall = true
-                    table.remove(ents, k)
-                    found = true
-                    break
-                end
-            end
-
-            if found then
-                CheckWalls()
+        for k, v in ipairs(jails) do
+            if IsValid(v) then
+                v:SetCustomCollisionCheck(true)
+                v.jailWall = true
+                table.remove(jails, k)
+                found = true
+                break
             end
         end
 
+        if found then
+            CheckWalls()
+        end
+    end
+
+    hook.Add("Think", "JailWalls", function()
         CheckWalls()
     end)
 end
