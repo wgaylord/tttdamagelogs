@@ -385,10 +385,10 @@ if CLIENT then
             if IsValid(v) then
                 v:SetCustomCollisionCheck(true)
                 v.jailWall = true
-                table.remove(jails, k)
-                continue
             end
         end
+
+        jails = {}
     end
 
     hook.Add("Think", "JailWalls", CheckWalls)
