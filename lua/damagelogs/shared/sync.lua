@@ -31,7 +31,7 @@ function Damagelog:GetSyncEnt()
 end
 
 if SERVER then
-    -- Creating the entity on InitPostEntity
+    -- Creating the entity on InitPostEntity and sync config
     hook.Add("InitPostEntity", "InitPostEntity_Damagelog", function()
         Damagelog.sync_ent = ents.Create("dmglog_sync_ent")
         Damagelog.sync_ent:Spawn()
@@ -51,5 +51,6 @@ if SERVER then
                 end
             end
         end
+        
     end)
 end
