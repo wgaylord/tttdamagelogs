@@ -1,5 +1,6 @@
 AddCSLuaFile("damagelogs/shared/defines.lua")
 AddCSLuaFile("damagelogs/config/config.lua")
+AddCSLuaFile("damagelogs/config/config_loader.lua")
 AddCSLuaFile("damagelogs/shared/lang.lua")
 AddCSLuaFile("damagelogs/shared/notify.lua")
 AddCSLuaFile("damagelogs/client/info_label.lua")
