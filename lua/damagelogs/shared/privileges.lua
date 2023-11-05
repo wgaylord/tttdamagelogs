@@ -1,9 +1,11 @@
 -- edit the privileges on shared/config.lua
 local function checkSettings(self, value)
+    local round_state = GetRoundState()
+
     if value == 1 or value == 2 then
-        return GetRoundState() ~= ROUND_ACTIVE
+        return round_state ~= ROUND_ACTIVE
     elseif value == 3 then
-        return GetRoundState() ~= ROUND_ACTIVE or self:IsSpec()
+        return round_state ~= ROUND_ACTIVE or self:IsSpec()
     elseif value == 4 then
         return true
     end
@@ -14,21 +16,14 @@ end
 local meta = FindMetaTable("Player")
 
 function meta:CanUseDamagelog()
-    for k, v in pairs(Damagelog.User_rights) do
-        if self:IsUserGroup(k) then
-            return checkSettings(self, v)
-        end
+    local value = Damagelog.User_rights[self:GetUserGroup()]
+    if value then
+        return checkSettings(self, value)
     end
 
     return checkSettings(self, 2)
 end
 
 function meta:CanUseRDMManager()
-    for k, v in pairs(Damagelog.RDM_Manager_Rights) do
-        if self:IsUserGroup(k) then
-            return v
-        end
-    end
-
-    return false
+    return Damagelog.RDM_Manager_Rights[self:GetUserGroup()]
 end
