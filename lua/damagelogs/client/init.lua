@@ -10,6 +10,7 @@ end)
 
 include("damagelogs/shared/defines.lua")
 include("damagelogs/config/config.lua")
+include("damagelogs/config/config_loader.lua")
 include("damagelogs/shared/lang.lua")
 include("damagelogs/client/settings.lua")
 include("damagelogs/shared/sync.lua")
@@ -222,6 +223,13 @@ function Damagelog:StrRole(role)
         end
     end
 end
+
+net.Receive("DL_SendConfig", function()
+    local config = net.ReadTable()
+    if config then
+        Damagelog:loadConfigFromTable(config)
+    end
+end)
 
 net.Receive("DL_InformSuperAdmins", function()
     local nick = net.ReadString()

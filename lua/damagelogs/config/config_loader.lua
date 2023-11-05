@@ -87,7 +87,7 @@ function Damagelog:saveConfig()
     file.Write("damagelog/config.json",util.TableToJSON(config,true))
 end
 
-function Damagelog:loadConfig() --Returns 0 on good load, returns -1 on failure due to corrupted file, returns 1 if entries are missing. 
+function Damagelog:loadConfig()
     if not file.Exists("damagelog/config.json", "DATA") then --If no config exists save the default config (config.lua) and return as if we loaded one.
         Damagelog:saveConfig()
         return
@@ -97,6 +97,11 @@ function Damagelog:loadConfig() --Returns 0 on good load, returns -1 on failure 
         ErrorNoHalt("Damagelogs: ERROR - Config Exists but is not valid JSON! Using default config.") 
         return
     end
+    
+    Damagelog:loadConfigFromTable(loaded_config)
+end
+
+function Damagelog:loadConfigFromTable(loaded_config)
     local config = Damagelog:getConfig()    
     
     --Clear out current users and rights

@@ -1,5 +1,6 @@
 AddCSLuaFile("damagelogs/shared/defines.lua")
 AddCSLuaFile("damagelogs/config/config.lua")
+AddCSLuaFile("damagelogs/config/config_loader.lua")
 AddCSLuaFile("damagelogs/shared/lang.lua")
 AddCSLuaFile("damagelogs/shared/notify.lua")
 AddCSLuaFile("damagelogs/client/info_label.lua")
@@ -26,7 +27,7 @@ include("damagelogs/config/config_loader.lua")
 Damagelog:loadMySQLConfig()
 Damagelog:loadConfig()
 Damagelog:saveConfig()
-
+Damagelog.Config = Damagelog:getConfig() --Get the config in its table state for sending to clients.
 
 include("damagelogs/server/sqlite.lua")
 include("damagelogs/shared/lang.lua")
@@ -74,6 +75,7 @@ util.AddNetworkString("DL_RefreshDamagelog")
 util.AddNetworkString("DL_InformSuperAdmins")
 util.AddNetworkString("DL_Ded")
 util.AddNetworkString("DL_SendLang")
+util.AddNetworkString("DL_SendConfig")
 Damagelog.DamageTable = Damagelog.DamageTable or {}
 Damagelog.OldTables = Damagelog.OldTables or {}
 Damagelog.ShootTables = Damagelog.ShootTables or {}
@@ -82,6 +84,10 @@ Damagelog.SceneRounds = Damagelog.SceneRounds or {}
 
 net.Receive("DL_SendLang", function(_, ply)
     ply.DMGLogLang = net.ReadString()
+    --Send config once we know the client is running code, DL_SendLang is convenently send at the InitPostEntity event.    
+    net.Start("DL_SendConfig")
+    net.WriteTable(Damagelog.Config) --Not recommended but makes the config sync future proof.
+    net.Send(ply)
 end)
 
 local Player = FindMetaTable("Player")
@@ -358,3 +364,5 @@ hook.Add("PlayerDeath", "Damagelog_PlayerDeathLastLogs", function(ply)
         roles = Damagelog.Roles[#Damagelog.Roles]
     }
 end)
+
+
