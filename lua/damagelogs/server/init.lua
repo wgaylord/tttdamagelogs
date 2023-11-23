@@ -180,6 +180,20 @@ hook.Add("PlayerInitialSpawn", "PlayerInitialSpawn_Damagelog", function(ply)
     end
 end)
 
+local dmgStrings = {
+    [DMG_BLAST] = "DMG_BLAST",
+    [DMG_DIRECT] = "DMG_BURN",
+    [DMG_BURN] = "DMG_BURN",
+    [DMG_CRUSH] = "DMG_CRUSH",
+    [DMG_FALL] = "DMG_CRUSH",
+    [DMG_SLASH] = "DMG_SLASH",
+    [DMG_CLUB] = "DMG_CLUB",
+    [DMG_SHOCK] = "DMG_SHOCK",
+    [DMG_ENERGYBEAM] = "DMG_ENERGYBEAM",
+    [DMG_SONIC] = "DMG_SONIC",
+    [DMG_PHYSGUN] = "DMG_PHYSGUN",
+}
+
 -- rip from TTT
 -- this one will return a string
 function Damagelog:WeaponFromDmg(dmg)
@@ -188,26 +202,11 @@ function Damagelog:WeaponFromDmg(dmg)
     local isWorldDamage = inf ~= nil and inf.IsWorld and inf:IsWorld()
 
     if IsValid(inf) or isWorldDamage then
+        local damageType = dmg:GetDamageType()
         if inf:IsWeapon() or inf.Projectile then
             wep = inf
-        elseif dmg:IsDamageType(DMG_BLAST) then
-            wep = "DMG_BLAST"
-        elseif dmg:IsDamageType(DMG_DIRECT) or dmg:IsDamageType(DMG_BURN) then
-            wep = "DMG_BURN"
-        elseif dmg:IsDamageType(DMG_CRUSH) or dmg:IsDamageType(DMG_FALL) then
-            wep = "DMG_CRUSH"
-        elseif dmg:IsDamageType(DMG_SLASH) then
-            wep = "DMG_SLASH"
-        elseif dmg:IsDamageType(DMG_CLUB) then
-            wep = "DMG_CLUB"
-        elseif dmg:IsDamageType(DMG_SHOCK) then
-            wep = "DMG_SHOCK"
-        elseif dmg:IsDamageType(DMG_ENERGYBEAM) then
-            wep = "DMG_ENERGYBEAM"
-        elseif dmg:IsDamageType(DMG_SONIC) then
-            wep = "DMG_SONIC"
-        elseif dmg:IsDamageType(DMG_PHYSGUN) then
-            wep = "DMG_PHYSGUN"
+        elseif dmgStrings[damageType] then
+            wep = dmgStrings[damageType]
         elseif inf:IsPlayer() then
             wep = inf:GetActiveWeapon()
 
@@ -217,7 +216,7 @@ function Damagelog:WeaponFromDmg(dmg)
         end
     end
 
-    if type(wep) ~= "string" then
+    if not isstring(wep) then
         return IsValid(wep) and wep:GetClass()
     else
         return wep
