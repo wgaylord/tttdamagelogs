@@ -1,4 +1,4 @@
-DamagelogLang.simplifiedchinese = {
+DamagelogLang.chinese = {
     DefaultReason = "未指定原因",
     -- Damage types
     DMG_BLAST = "爆炸",
@@ -292,7 +292,7 @@ DamagelogLang.simplifiedchinese = {
     WhatToSay = "你想对 %s 说什么？",
     RemoveAutoSlays = "移除自动背锅给",
     RemoveAutoJails = "移除自动监禁给",
-    RemoveOneAutoSlay = "从中移除 1 个自动背锅"
+    RemoveOneAutoSlay = "从中移除 1 个自动背锅",
     TheVictim = "受害者",
     ChatActive = "聊天活跃",
     GoingToSlay = "你将要杀掉",
