@@ -348,7 +348,7 @@ DamagelogLang.chinese = {
     RDMuponRDM = "在RDM时启用RDM管理器弹窗",
     CurrentRoundLogs = "如果你仍活着并且允许打开日志，则默认打开当前回合",
     OutsideNotification = "在游戏外启用通知声音",
-    ShotLogsDamageTab = "伤害选项卡旁的射击日志",
+    ShotLogsDamageTab = "伤害选项卡旁的攻击击日志",
     DamagelogMenuSettings = "伤害日志菜单设置",
     ForcedLanguage = "服务器所有者强制使用此语言",
     -- Filters
