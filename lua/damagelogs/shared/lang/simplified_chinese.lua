@@ -221,7 +221,6 @@ DamagelogLang.chinese = {
     NoWeapon = "<无武器>",
     scorpse = "的尸体",
     TakeAction = "采取行动",
-    HaventReported = "您还没有报告任何人！没有报告可以查看。",
     RDMConclusion = "结论",
     ViewPreviousReports = "查看报告",
     YourReport = "您的报告",
