@@ -11,45 +11,43 @@ local event = {}
 event.Type = "HEAL"
 
 function event:TTTPlayerUsedHealthStation(ply, ent, healed)
-    if not (ply.IsGhost and ply:IsGhost()) and ply:IsPlayer() then
-        if usages[ply:SteamID()] == nil then
-            local timername = "HealTimer_" .. tostring(ply:SteamID())
+    if (ply.IsGhost and ply:IsGhost()) or not ply:IsPlayer() then return end
 
-            timer.Create(timername, 5, 0, function()
-                if not IsValid(ply) then
-                    timer.Remove(timername)
-                elseif usages[ply:SteamID()] > 0 then
-                    self:Store(ply, ent, usages[ply:SteamID()])
-                    usages[ply:SteamID()] = 0
-                else
-                    usages[ply:SteamID()] = nil
-                    self:RemoveTimer(ply:SteamID())
-                end
-            end)
+    if usages[ply:SteamID()] ~= nil then
+        usages[ply:SteamID()] = usages[ply:SteamID()] + healed
+        return
+    end
 
-            self:Store(ply, ent, healed)
+    local healthStationOwner = (ent.GetPlacer and ent:GetPlacer()) -- Vanilla TTT
+        or (ent.GetOriginator and ent:GetOriginator()) -- TTT2
+        or nil
+
+    local timername = "HealTimer_" .. tostring(ply:SteamID())
+
+    timer.Create(timername, 5, 0, function()
+        if not IsValid(ply) then
+            timer.Remove(timername)
+        elseif usages[ply:SteamID()] > 0 then
+            self:Store(ply, healthStationOwner, usages[ply:SteamID()])
             usages[ply:SteamID()] = 0
         else
-            usages[ply:SteamID()] = usages[ply:SteamID()] + healed
+            usages[ply:SteamID()] = nil
+            self:RemoveTimer(ply:SteamID())
         end
-    end
+    end)
+
+    self:Store(ply, healthStationOwner, healed)
+    usages[ply:SteamID()] = 0
 end
 
-function event:Store(ply, ent, healed)
+function event:Store(ply, healthStationOwner, healed)
+    local isOwnerValid = IsValid(healthStationOwner)
     local tbl = {
         [1] = ply:GetDamagelogID(),
-        [2] = healed
+        [2] = healed,
+        [3] = isOwnerValid,
+        [4] = isOwnerValid and healthStationOwner:GetDamagelogID() or nil
     }
-
-    local placer = ent:GetPlacer()
-    local validOwner = IsValid(placer)
-
-    if validOwner then
-        table.insert(tbl, true)
-        table.insert(tbl, placer:GetDamagelogID())
-    else
-        table.insert(tbl, false)
-    end
 
     self.CallEvent(tbl)
 end
