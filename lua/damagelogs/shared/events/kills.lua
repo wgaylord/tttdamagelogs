@@ -48,7 +48,7 @@ function event:DoPlayerDeath(ply, attacker, dmginfo)
 
         if attacker:GetRole() == ROLE_TRAITOR and (ply:GetRole() == ROLE_INNOCENT or ply:GetRole() == ROLE_DETECTIVE)
           or TTT2 and attacker:GetTeam() == TEAM_TRAITOR and not attacker:IsInTeam(ply)
-          or CR_VERSION and attacker:IsTraitorTeam() and not ply:IsTraitorTeam() then
+          or CR_VERSION and (attacker:IsInnocentTeam() or not attacker:IsSameTeam(ply)) then
             net.WriteUInt(0, 1)
         else
             net.WriteUInt(1, 1)
