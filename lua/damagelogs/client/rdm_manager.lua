@@ -55,6 +55,8 @@ local function BuildReportFrame(report)
             return
         end
 
+        RunConsoleCommand("-voicerecord")
+        
         net.Start("DL_Answering")
         net.SendToServer()
         ReportFrame = vgui.Create("DFrame")
